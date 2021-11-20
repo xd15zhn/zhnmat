@@ -1,0 +1,8 @@
+# V1.1.1
+Add some operators between matrix and vector.
+Fix some bugs of friend function of Vector3d.
+
+
+
+# bug,treacherous and todo lists
+inverse matrix, linear equations, determinant and so on.
