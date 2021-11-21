@@ -5,17 +5,23 @@ Vector3d::Vector3d(const Vector3d &vec) { _x=vec._x, _y=vec._y, _z=vec._z; }
 Vector3d Vector3d::operator+(const Vector3d &vec) const { return Vector3d(_x + vec._x, _y + vec._y, _z + vec._z); }
 Vector3d Vector3d::operator-(const Vector3d &vec) const { return Vector3d(_x - vec._x, _y - vec._y, _z - vec._z); }
 Vector3d Vector3d::operator*(double x) const { return Vector3d(_x * x, _y * x, _z * x); }
-Vector3d& Vector3d::operator=(const Vector3d &vec) { _x=vec._x, _y=vec._y, _z=vec._z;return *this; }
-Vector3d& Vector3d::operator+=(const Vector3d &vec) { _x+=vec._x, _y+=vec._y, _z+=vec._z;return *this; }
+Vector3d operator*(double n, const Vector3d& m) { return m*n; }
+Vector3d& Vector3d::operator=(const Vector3d &vec) { _x=vec._x, _y=vec._y, _z=vec._z; return *this; }
+Vector3d& Vector3d::operator+=(const Vector3d &vec) { _x+=vec._x, _y+=vec._y, _z+=vec._z; return *this; }
+Vector3d& Vector3d::operator-=(const Vector3d &vec) { _x-=vec._x, _y-=vec._y, _z-=vec._z; return *this; }
+Vector3d& Vector3d::operator*=(double x) { _x*=x, _y*=x, _z*=x; return *this; }
 double Vector3d::operator*(const Vector3d& vec) { return _x*vec._x + _y*vec._y + _z*vec._z; }
+Vector3d &Vector3d::Reset() { _x=0;_y=0;_z=0;return *this; }
+Vector3d &Vector3d::Reverse() { _x=-_x;_y=-_y;_z=-_z;return *this; }
 double Vector3d::norm2() const{ return sqrt(_x * _x + _y * _y + _z * _z); }
 
-void Vector3d::Normalize(void)
+Vector3d& Vector3d::Normalize(void)
 {
 	double len = norm2();
 	_x /= len;
 	_y /= len;
 	_z /= len;
+    return *this;
 }
 
 Vector3d Vector3d::operator&(const Vector3d &vec)

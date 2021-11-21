@@ -34,17 +34,22 @@ public:
     Vector3d(double x, double y, double z) :_x(x), _y(y), _z(z) {};
     Vector3d(const Vector3d& vec);
     Vector3d operator+(const Vector3d& vec) const;
+    Vector3d operator+(const Mat& m) const;
     Vector3d operator-(const Vector3d& vec) const;
     Vector3d operator*(double x) const;
     Vector3d operator&(const Vector3d& vec);
     Vector3d& operator=(const Vector3d& vec);
     Vector3d& operator+=(const Vector3d& vec);
+    Vector3d& operator-=(const Vector3d& vec);
+    Vector3d& operator*=(double x);
     double operator*(const Vector3d& vec);
+    friend Vector3d operator*(double n, const Vector3d& m);
     friend std::ostream& operator<<(std::ostream &os, const Vector3d& vec);
     double norm2() const;
-    void Normalize();
-	double _x, _y, _z;
-    Vector3d operator+(const Mat& m) const;
+    Vector3d& Reset();
+    Vector3d& Normalize();
+    Vector3d& Reverse();
+    double _x, _y, _z;
 };
 
 class Mat {
