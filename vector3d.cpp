@@ -14,11 +14,13 @@ double Vector3d::operator*(const Vector3d& vec) { return _x*vec._x + _y*vec._y +
 Vector3d &Vector3d::Reset() { _x=0;_y=0;_z=0;return *this; }
 Vector3d &Vector3d::Reverse() { _x=-_x;_y=-_y;_z=-_z;return *this; }
 double Vector3d::norm2() const{ return sqrt(_x * _x + _y * _y + _z * _z); }
+Vector3d Vec_vertical(const Vector3d &v1) { return Vector3d(-v1._y, v1._x, 0); }
 
 Vector3d& Vector3d::Normalize(void)
 {
 	double len = norm2();
-	_x /= len;
+    if (len==0) return *this;
+    _x /= len;
 	_y /= len;
 	_z /= len;
     return *this;
@@ -47,15 +49,12 @@ Vector3d Vector3d::operator+(const Mat& m) const
 
 double Vec_angle(Vector3d &v1, Vector3d &v2)
 {
-    return (v1*v2) / v1.norm2() / v2.norm2();
-}
-
-Vector3d Vec_vertical(const Vector3d &v1)
-{
-    if (ABS(v1._y) <= 1e-6)
-        return Vector3d(0, 1, 0);
-	else
-        return Vector3d(-1, v1._x/v1._y, 0);
+    double v1norm = v1.norm2();
+    double v2norm = v2.norm2();
+    if (v1norm==0 || v2norm==0)
+        return 0;
+    double ans = (v1*v2) / v1norm / v2norm;
+    return (ans<-1) ? -1 : ((ans>1) ? 1 : ans);
 }
 
 NAMESPACE_ZHNMAT_R

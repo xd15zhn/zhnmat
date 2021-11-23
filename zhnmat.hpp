@@ -4,7 +4,7 @@
 #include <vector>
 #include <cmath>
 
-#define ZHNMAT_VERSION                  1.1.1
+#define ZHNMAT_VERSION                  1.1.2
 #define NAMESPACE_ZHNMAT_L              namespace zhnmat {
 #define NAMESPACE_ZHNMAT_R              }
 NAMESPACE_ZHNMAT_L
