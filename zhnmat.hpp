@@ -3,10 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#ifdef USE_OPENCV
-#include <opencv2/opencv.hpp>
-#endif
-#define ZHNMAT_VERSION                  "1.1.3"
+#define ZHNMAT_VERSION                  "1.1.4"
 #define NAMESPACE_ZHNMAT_L              namespace zhnmat {
 #define NAMESPACE_ZHNMAT_R              }
 NAMESPACE_ZHNMAT_L
@@ -62,9 +59,6 @@ public:
     Mat(int r, int c, double value=0);
     Mat(int r, int c, std::vector<double> data);
     ~Mat();
-#ifdef USE_OPENCV
-    Mat(cv::Mat m);
-#endif
 
     // Return how many rows and columns.
     int row() const;
@@ -104,10 +98,10 @@ public:
     friend std::istream& operator>>(std::istream& is, Mat& m);  // Unfinished.
     Vector3d operator*(const Vector3d& vec) const;
     Mat operator+(const Vector3d& vec) const;
+    static unsigned char OutputFormat;
 
 private:
     int _r, _c;
-    static unsigned char OutputFormat;
     double** _p;
     void initialize();
     Mat L(), U();

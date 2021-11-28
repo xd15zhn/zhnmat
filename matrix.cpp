@@ -8,7 +8,7 @@ Mat operator*(double n, const Mat& m) { return m*n; }
 
 void Mat::initialize()
 {
-    MAT_ASSERT_ERROR(_r>0&&_c>0,
+    MAT_ASSERT_ERROR(_r>0 && _c>0,
         "The number of rows and columns must be greater than 0!");
     _p = new double* [_r];
     for (int i = 0; i < _r; ++i)
@@ -65,15 +65,6 @@ Mat::Mat(int r, int c, std::vector<double> data)
         }
     }
 }
-
-#ifdef USE_OPENCV
-Mat::Mat(cv::Mat m)
-{
-    for (int i=0; i<m.rows; i++)
-        for (int j=0; j<m.cols; j++)
-            _p[i][j] = m.at<double>(i, j);
-}
-#endif
 
 Mat::~Mat()
 {
@@ -362,6 +353,7 @@ std::ostream& operator<<(std::ostream& os, const Mat& m)
 {
     MAT_ASSERT_WARNING((Mat::OutputFormat&0xF8)==0, "Wrong format were given.");
     unsigned char opf = Mat::OutputFormat & 0x07;
+    os.precision(16);
     if (opf & USE_BRACKET) os << "[";
     if (opf & WRAP_AROUND) os << std::endl;
     for (int i=0; i<m._r; ++i){
