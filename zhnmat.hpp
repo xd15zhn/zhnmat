@@ -3,8 +3,10 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-
-#define ZHNMAT_VERSION                  1.1.2
+#ifdef USE_OPENCV
+#include <opencv2/opencv.hpp>
+#endif
+#define ZHNMAT_VERSION                  "1.1.3"
 #define NAMESPACE_ZHNMAT_L              namespace zhnmat {
 #define NAMESPACE_ZHNMAT_R              }
 NAMESPACE_ZHNMAT_L
@@ -60,6 +62,9 @@ public:
     Mat(int r, int c, double value=0);
     Mat(int r, int c, std::vector<double> data);
     ~Mat();
+#ifdef USE_OPENCV
+    Mat(cv::Mat m);
+#endif
 
     // Return how many rows and columns.
     int row() const;
@@ -68,9 +73,6 @@ public:
     // Get and set specified pixels.
     double at(int r, int c) const;
     void set(int r, int c, double value=0);
-
-    // If you want to print the matrix for other usage.
-    void Set_OutputFormat(unsigned char format);
 
     // Transpose. method: 0 for traditional method; 1 for fast method.
     // Method 1 unfinished.
@@ -105,7 +107,7 @@ public:
 
 private:
     int _r, _c;
-    unsigned char opf;
+    static unsigned char OutputFormat;
     double** _p;
     void initialize();
     Mat L(), U();

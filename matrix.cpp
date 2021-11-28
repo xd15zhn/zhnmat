@@ -1,6 +1,7 @@
 #include "zhnmat.hpp"
 NAMESPACE_ZHNMAT_L
 
+unsigned char Mat::OutputFormat = USE_BRACKET | USE_SEMICOLON;
 int Mat::row() const { return _r; }
 int Mat::col() const { return _c; }
 Mat operator*(double n, const Mat& m) { return m*n; }
@@ -12,7 +13,6 @@ void Mat::initialize()
     _p = new double* [_r];
     for (int i = 0; i < _r; ++i)
         _p[i] = new double[_c];
-    opf = USE_BRACKET | USE_SEMICOLON;
 }
 
 Mat::Mat(const Mat& m, GENERATE_TYPE type)
@@ -66,6 +66,15 @@ Mat::Mat(int r, int c, std::vector<double> data)
     }
 }
 
+#ifdef USE_OPENCV
+Mat::Mat(cv::Mat m)
+{
+    for (int i=0; i<m.rows; i++)
+        for (int j=0; j<m.cols; j++)
+            _p[i][j] = m.at<double>(i, j);
+}
+#endif
+
 Mat::~Mat()
 {
     for (int i = 0; i < _r; ++i)
@@ -82,12 +91,6 @@ void Mat::set(int r, int c, double value)
 {
     MAT_ASSERT_ERROR(r<=_r && c<=_c, "Indexes out of range!");
     _p[r][c]=value;
-}
-
-void Mat::Set_OutputFormat(unsigned char format)
-{
-    MAT_ASSERT_WARNING((format&0xF8)==0, "Wrong format were given.");
-    opf = format & 0x07;
 }
 
 Mat Mat::T(int method)
@@ -357,15 +360,17 @@ Mat Mat::operator+(const Vector3d& vec) const
 
 std::ostream& operator<<(std::ostream& os, const Mat& m)
 {
-    if (m.opf & USE_BRACKET) os << "[";
-    if (m.opf & WRAP_AROUND) os << std::endl;
+    MAT_ASSERT_WARNING((Mat::OutputFormat&0xF8)==0, "Wrong format were given.");
+    unsigned char opf = Mat::OutputFormat & 0x07;
+    if (opf & USE_BRACKET) os << "[";
+    if (opf & WRAP_AROUND) os << std::endl;
     for (int i=0; i<m._r; ++i){
         for (int j=0; j<m._c-1; ++j)
             os << m._p[i][j] << ", ";
-        os << m._p[i][m._c-1] << ((m.opf & USE_SEMICOLON)? "; " : ", ");
-        if (m.opf & WRAP_AROUND) os << std::endl;
+        os << m._p[i][m._c-1] << ((opf & USE_SEMICOLON)? "; " : ", ");
+        if (opf & WRAP_AROUND) os << std::endl;
     }
-    if (m.opf & USE_BRACKET) os << "]";
+    if (opf & USE_BRACKET) os << "]";
     return os;
 }
 
