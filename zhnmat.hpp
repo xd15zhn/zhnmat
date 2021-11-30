@@ -28,8 +28,7 @@ class Mat;
 
 struct Vector3d
 {
-public:
-    Vector3d() :_x(0), _y(0), _z(0) {};
+    Vector3d(): _x(0), _y(0), _z(0) {};
     Vector3d(double x, double y, double z) :_x(x), _y(y), _z(z) {};
     Vector3d(const Vector3d& vec);
     Vector3d operator+(const Vector3d& vec) const;
@@ -51,10 +50,18 @@ public:
     double _x, _y, _z;
 };
 
-class Mat {
+struct Rect
+{
+    Rect(int x, int y, int w, int h):
+        _x(x), _y(y), _w(w), _h(h) {};
+    int _x, _y, _w, _h;
+};
+
+class Mat
+{
 public:
     Mat() :_r(0), _c(0), _p(nullptr) {}
-    Mat(const Mat&, GENERATE_TYPE type=NORMAL);
+    Mat(const Mat& m, GENERATE_TYPE type=NORMAL);
     Mat(std::vector<double> data);
     Mat(int r, int c, double value=0);
     Mat(int r, int c, std::vector<double> data);
@@ -93,11 +100,12 @@ public:
     Mat& operator-=(const Mat& m);
     Mat& operator*=(const Mat& m);
     Mat& operator*=(double n);
+    Vector3d operator*(const Vector3d& vec) const;
+    Mat operator+(const Vector3d& vec) const;
+    Mat operator()(const Rect& rect) const;
     friend Mat operator*(double n, const Mat& m);
     friend std::ostream& operator<<(std::ostream& os, const Mat& m);
     friend std::istream& operator>>(std::istream& is, Mat& m);  // Unfinished.
-    Vector3d operator*(const Vector3d& vec) const;
-    Mat operator+(const Vector3d& vec) const;
     static unsigned char OutputFormat;
 
 private:

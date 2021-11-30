@@ -8,17 +8,16 @@ int main()
 {
     using namespace std;
     using namespace zhnmat;
+    Mat::OutputFormat = USE_BRACKET | USE_SEMICOLON | WRAP_AROUND;
     Mat P1(3, 3, vector<double>{395.996938447599, 0, 355.3537673950195, 0, 395.996938447599, 237.5834827423096, 0, 0, 1});
     Mat p1inv = P1.inv();
     PRINT_NAME_VALUE(p1inv);
     cout << p1inv*P1 << endl;
     p1inv.set(0, 0, 1);
     Mat test1(eye(4));
-    test1.Set_OutputFormat(USE_BRACKET | USE_SEMICOLON | WRAP_AROUND);
     PRINT_NAME_VALUE(test1);
     Mat test2(Gaussian_Kernel(1.52, 5));
     Mat test3(Convolution(test2, test1));
-    test2.Set_OutputFormat(USE_BRACKET | USE_SEMICOLON | WRAP_AROUND);
     cout << test2 << endl;
     default_random_engine gen((unsigned int)time(0));  // 生成初始化种子
     normal_distribution<double> NormDis(0, 1);  // 正态分布
@@ -30,5 +29,8 @@ int main()
     Mat down(img, GENERATE_TYPE::DOWN_SAMPLE);
     cout << img.at(2, 4) << " " <<  down.at(1, 2) << endl;
     cout << img.at(638, 478) << " " << down.at(319, 239) << endl;
+    Mat ordered(3, 4, vector<double>{1,2,3,4,5,6,7,8,9,10,11,12});
+    Mat testrect(ordered(Rect(1,0,3,2)));
+    PRINT_NAME_VALUE(testrect);
     return 0;
 }

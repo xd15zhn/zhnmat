@@ -349,6 +349,18 @@ Mat Mat::operator+(const Vector3d& vec) const
     return ans;
 };
 
+Mat Mat::operator()(const Rect &rect) const
+{
+    MAT_ASSERT_ERROR(_r>0 && _c>0, "Matrix haven't been initialized!");
+    MAT_ASSERT_ERROR(rect._w>0 && rect._h>0, "Rect error!");
+    MAT_ASSERT_ERROR(_r>=rect._w && _c>=rect._h, "Rect out of range!");
+    Mat ans(rect._h, rect._w);
+    for (int i = 0; i < ans._r; ++i)
+        for (int j = 0; j < ans._c; ++j)
+            ans._p[i][j] = this->_p[i+rect._y][j+rect._x];
+    return ans;
+}
+
 std::ostream& operator<<(std::ostream& os, const Mat& m)
 {
     MAT_ASSERT_WARNING((Mat::OutputFormat&0xF8)==0, "Wrong format were given.");
