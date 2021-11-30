@@ -31,17 +31,23 @@ struct Vector3d
     Vector3d(): _x(0), _y(0), _z(0) {};
     Vector3d(double x, double y, double z) :_x(x), _y(y), _z(z) {};
     Vector3d(const Vector3d& vec);
+
+    // operator
     Vector3d operator+(const Vector3d& vec) const;
-    Vector3d operator+(const Mat& m) const;
     Vector3d operator-(const Vector3d& vec) const;
-    Vector3d operator*(double x) const;
-    Vector3d operator&(const Vector3d& vec);
-    Vector3d& operator=(const Vector3d& vec);
     Vector3d& operator+=(const Vector3d& vec);
     Vector3d& operator-=(const Vector3d& vec);
-    Vector3d& operator*=(double x);
-    double operator*(const Vector3d& vec);
+    Vector3d operator+(const Mat& m) const;
+    Vector3d operator-(const Mat& m) const;
+
+    Vector3d operator*(double x) const;
     friend Vector3d operator*(double n, const Vector3d& m);
+    double operator*(const Vector3d& vec);
+    double operator*(const Mat& m);
+    Vector3d& operator*=(double x);
+
+    Vector3d operator&(const Vector3d& vec);
+    Vector3d& operator=(const Vector3d& vec);
     friend std::ostream& operator<<(std::ostream &os, const Vector3d& vec);
     double norm2() const;
     Vector3d& Reset();
@@ -90,20 +96,23 @@ public:
     std::vector<double> Solve_LinearEqution(const std::vector<double>);
     std::vector<double> Solve_LeastSquare(const std::vector<double>);
 
-    // Matrix operator
+    // operator
     Mat operator*(double n) const;
+    Mat operator*(const Mat& m) const;
+    Vector3d operator*(const Vector3d& vec) const;
+    friend Mat operator*(double n, const Mat& m);
+    Mat& operator*=(double n);
+    Mat& operator*=(const Mat& m);
+
     Mat operator+(const Mat& m) const;
     Mat operator-(const Mat& m) const;
-    Mat operator*(const Mat& m) const;
-    Mat& operator=(const Mat& m);
     Mat& operator+=(const Mat& m);
     Mat& operator-=(const Mat& m);
-    Mat& operator*=(const Mat& m);
-    Mat& operator*=(double n);
-    Vector3d operator*(const Vector3d& vec) const;
-    Mat operator+(const Vector3d& vec) const;
+    Vector3d operator+(const Vector3d& vec) const;
+    Vector3d operator-(const Vector3d& vec) const;
+
+    Mat& operator=(const Mat& m);
     Mat operator()(const Rect& rect) const;
-    friend Mat operator*(double n, const Mat& m);
     friend std::ostream& operator<<(std::ostream& os, const Mat& m);
     friend std::istream& operator>>(std::istream& is, Mat& m);  // Unfinished.
     static unsigned char OutputFormat;

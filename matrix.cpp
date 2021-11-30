@@ -4,7 +4,6 @@ NAMESPACE_ZHNMAT_L
 unsigned char Mat::OutputFormat = USE_BRACKET | USE_SEMICOLON;
 int Mat::row() const { return _r; }
 int Mat::col() const { return _c; }
-Mat operator*(double n, const Mat& m) { return m*n; }
 
 void Mat::initialize()
 {
@@ -32,7 +31,6 @@ Mat::Mat(const Mat& m, GENERATE_TYPE type)
                 _p[i][j] = m._p[i<<1][j<<1];
     }
 }
-
 Mat::Mat(std::vector<double> data)
 {
     if (data.size()<1) return;
@@ -41,7 +39,6 @@ Mat::Mat(std::vector<double> data)
     for (int i = 0; i < _r; ++i)
         _p[i][0] = data[i];
 }
-
 Mat::Mat(int r, int c, double value)
 {
     _r = r; _c = c;
@@ -50,11 +47,10 @@ Mat::Mat(int r, int c, double value)
         for (int j = 0; j < _c; ++j)
             _p[i][j] = value;
 }
-
 Mat::Mat(int r, int c, std::vector<double> data)
 {
     MAT_ASSERT_WARNING(r*c==(int)data.size(),
-        "The number of data you enter is not equal to the product of rows and columns.");
+        "The number of data you enter is not equal to the multiplication of rows and columns.");
     _r = r; _c = c;
     initialize();
     int cnt;
@@ -65,7 +61,6 @@ Mat::Mat(int r, int c, std::vector<double> data)
         }
     }
 }
-
 Mat::~Mat()
 {
     for (int i = 0; i < _r; ++i)
@@ -98,7 +93,6 @@ Mat Mat::T(int method)
     }
     return ans;
 }
-
 Mat Mat::M()
 {
     MAT_ASSERT_ERROR((_r==3) && (_c==1), "can't transform to antisymmetric matrix!");
@@ -111,7 +105,6 @@ Mat Mat::M()
     ans._p[1][0] = +_p[2][0];
     return ans;
 }
-
 Mat Mat::inv(int method)
 {
     MAT_ASSERT_ERROR(_r==_c, "can't reverse non-square matrix!");
@@ -232,6 +225,10 @@ std::vector<double> Mat::Solve_LeastSquare(const std::vector<double> m)
     return ans;
 }
 
+
+/**********************
+operator multiplication
+**********************/
 Mat Mat::operator*(double n) const
 {
     Mat ans(_r, _c);
@@ -240,38 +237,96 @@ Mat Mat::operator*(double n) const
             ans._p[i][j] = _p[i][j] * n;
     return ans;
 }
-
-Mat Mat::operator+(const Mat& m) const
-{
-    MAT_ASSERT_ERROR((_r==m._r) && (_c==m._c), "Size mismatch!");
-    Mat ans(_r, _c, 0.0);
-    for (int i = 0; i < _r; ++i)
-        for (int j = 0; j < m._c; ++j)
-            ans._p[i][j] = _p[i][j] + m._p[i][j];
-    return ans;
-}
-
-Mat Mat::operator-(const Mat& m) const
-{
-    MAT_ASSERT_ERROR((_r==m._r) && (_c==m._c), "Size mismatch!");
-    Mat ans(_r, _c, 0.0);
-    for (int i = 0; i < _r; ++i)
-        for (int j = 0; j < m._c; ++j)
-            ans._p[i][j] = _p[i][j] - m._p[i][j];
-    return ans;
-}
-
 Mat Mat::operator*(const Mat& m) const
 {
-    MAT_ASSERT_ERROR(_c==m._r, "Size mismatch!");
-    Mat ans(_r, m._c, 0.0);
+    MAT_ASSERT_ERROR(_c==m._r, "Size mismatch! Multiplication between matrix.");
+    Mat ans(_r, m._c);
     for (int i = 0; i < _r; ++i)
         for (int j = 0; j < m._c; ++j)
             for (int k = 0; k < _c; k++)
                 ans._p[i][j] += (_p[i][k] * m._p[k][j]);
     return ans;
 }
+Vector3d Mat::operator*(const Vector3d &vec) const
+{
+    MAT_ASSERT_ERROR(_r==3 && _c==3, "Size mismatch! Multiplication between matrix and vector.");
+    Vector3d ans;
+    ans._x = _p[0][0]*vec._x + _p[0][1]*vec._y + _p[0][2]*vec._z;
+    ans._y = _p[1][0]*vec._x + _p[1][1]*vec._y + _p[1][2]*vec._z;
+    ans._z = _p[2][0]*vec._x + _p[2][1]*vec._y + _p[2][2]*vec._z;
+    return ans;
+};
+Mat operator*(double n, const Mat& m) { return m*n; }
+Mat& Mat::operator*=(double n)
+{
+    for (int i = 0; i < _r; ++i)
+        for (int j = 0; j < _c; ++j)
+                _p[i][j] *= n;
+    return *this;
+}
+Mat& Mat::operator*=(const Mat& m)
+{
+    MAT_ASSERT_ERROR(_c==m._r, "Size mismatch! Multiplication between matrix.");
+    Mat temp(_r, m._c);
+    for (int i = 0; i < temp._r; ++i)
+        for (int j = 0; j < temp._c; ++j)
+            for (int k = 0; k < _c; ++k)
+                temp._p[i][j] += (_p[i][k] * m._p[k][j]);
+    *this = temp;
+    return *this;
+}
 
+/**********************
+operator addition and subtraction
+**********************/
+Mat Mat::operator+(const Mat& m) const
+{
+    MAT_ASSERT_ERROR(_r==m._r && _c==m._c, "Size mismatch! Addition between matrix.");
+    Mat ans(_r, _c, 0.0);
+    for (int i = 0; i < _r; ++i)
+        for (int j = 0; j < m._c; ++j)
+            ans._p[i][j] = _p[i][j] + m._p[i][j];
+    return ans;
+}
+Mat Mat::operator-(const Mat& m) const
+{
+    MAT_ASSERT_ERROR(_r==m._r && _c==m._c, "Size mismatch! Subtraction between matrix.");
+    Mat ans(_r, _c, 0.0);
+    for (int i = 0; i < _r; ++i)
+        for (int j = 0; j < m._c; ++j)
+            ans._p[i][j] = _p[i][j] - m._p[i][j];
+    return ans;
+}
+Mat& Mat::operator+=(const Mat& m)
+{
+    MAT_ASSERT_ERROR(_r==m._r && _c==m._c, "Size mismatch! Addition between matrix.");
+    for (int i = 0; i < _r; ++i)
+        for (int j = 0; j < _c; ++j)
+            _p[i][j] += m._p[i][j];
+    return *this;
+}
+Mat& Mat::operator-=(const Mat& m)
+{
+    MAT_ASSERT_ERROR(_r==m._r && _c==m._c, "Size mismatch! Subtraction between matrix.");
+    for (int i = 0; i < _r; ++i)
+        for (int j = 0; j < _c; ++j)
+            _p[i][j] -= m._p[i][j];
+    return *this;
+}
+Vector3d Mat::operator+(const Vector3d& vec) const
+{
+    MAT_ASSERT_ERROR(_r==3 && _c==1, "Size mismatch! Addition between matrix and vector.");
+    return Vector3d(_p[0][0] + vec._x, _p[1][0] + vec._y, _p[2][0] + vec._z);
+};
+Vector3d Mat::operator-(const Vector3d& vec) const
+{
+    MAT_ASSERT_ERROR(_r==3 && _c==1, "Size mismatch! Subtraction between matrix and vector.");
+    return Vector3d(_p[0][0] - vec._x, _p[1][0] - vec._y, _p[2][0] - vec._z);
+};
+
+/**********************
+assignment
+**********************/
 Mat& Mat::operator=(const Mat& m)
 {
     if (this == &m) return *this;
@@ -290,65 +345,6 @@ Mat& Mat::operator=(const Mat& m)
             _p[i][j] = m._p[i][j];
     return *this;
 }
-
-Mat& Mat::operator+=(const Mat& m)
-{
-    MAT_ASSERT_ERROR((_r==m._r) && (_c==m._c), "Size mismatch!");
-    for (int i = 0; i < _r; ++i)
-        for (int j = 0; j < _c; ++j)
-            _p[i][j] += m._p[i][j];
-    return *this;
-}
-
-Mat& Mat::operator-=(const Mat& m)
-{
-    MAT_ASSERT_ERROR((_r==m._r) && (_c==m._c), "Size mismatch!");
-    for (int i = 0; i < _r; ++i)
-        for (int j = 0; j < _c; ++j)
-            _p[i][j] -= m._p[i][j];
-    return *this;
-}
-
-Mat& Mat::operator*=(const Mat& m)
-{
-    MAT_ASSERT_ERROR(_c==m._r, "Size mismatch!");
-    Mat temp(_r, m._c);
-    for (int i = 0; i < temp._r; ++i)
-        for (int j = 0; j < temp._c; ++j)
-            for (int k = 0; k < _c; ++k)
-                temp._p[i][j] += (_p[i][k] * m._p[k][j]);
-    *this = temp;
-    return *this;
-}
-
-Mat& Mat::operator*=(double n)
-{
-    for (int i = 0; i < _r; ++i)
-        for (int j = 0; j < _c; ++j)
-                _p[i][j] *= n;
-    return *this;
-}
-
-Vector3d Mat::operator*(const Vector3d &vec) const
-{
-    MAT_ASSERT_ERROR(_r==3 && _c==3, "Size mismatch! Multiplication between matrix and vector.");
-    Vector3d ans;
-    ans._x = _p[0][0]*vec._x + _p[0][1]*vec._y + _p[0][2]*vec._z;
-    ans._y = _p[1][0]*vec._x + _p[1][1]*vec._y + _p[1][2]*vec._z;
-    ans._z = _p[2][0]*vec._x + _p[2][1]*vec._y + _p[2][2]*vec._z;
-    return ans;
-};
-
-Mat Mat::operator+(const Vector3d& vec) const
-{
-    MAT_ASSERT_ERROR(_r==3 && _c==1, "Size mismatch! Addition between matrix and vector.");
-    Mat ans(3, 1);
-    ans._p[0][0] += vec._x;
-    ans._p[1][0] += vec._y;
-    ans._p[2][0] += vec._z;
-    return ans;
-};
-
 Mat Mat::operator()(const Rect &rect) const
 {
     MAT_ASSERT_ERROR(_r>0 && _c>0, "Matrix haven't been initialized!");
@@ -361,6 +357,9 @@ Mat Mat::operator()(const Rect &rect) const
     return ans;
 }
 
+/**********************
+input and output
+**********************/
 std::ostream& operator<<(std::ostream& os, const Mat& m)
 {
     MAT_ASSERT_WARNING((Mat::OutputFormat&0xF8)==0, "Wrong format were given.");
@@ -377,7 +376,6 @@ std::ostream& operator<<(std::ostream& os, const Mat& m)
     if (opf & USE_BRACKET) os << "]";
     return os;
 }
-
 std::istream& operator>>(std::istream& is, Mat& m)
 {
     for (int i=0; i<m._r; i++)
