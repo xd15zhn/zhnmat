@@ -1,6 +1,7 @@
 #include "zhnmat.hpp"
 NAMESPACE_ZHNMAT_L
 
+Vector3d::Vector3d(): _x(0), _y(0), _z(0) {};
 Vector3d::Vector3d(const Vector3d &vec) { _x=vec._x, _y=vec._y, _z=vec._z; }
 Vector3d& Vector3d::operator=(const Vector3d &vec) { _x=vec._x, _y=vec._y, _z=vec._z; return *this; }
 Vector3d &Vector3d::Reset() { _x=0;_y=0;_z=0;return *this; }
