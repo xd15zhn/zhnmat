@@ -1,8 +1,8 @@
+#include <iostream>
 #include "zhnmat.hpp"
 NAMESPACE_ZHNMAT_L
 
 unsigned char Mat::OutputFormat = USE_BRACKET | USE_SEMICOLON;
-Mat::Mat() :_r(0), _c(0), _p(nullptr) {}
 int Mat::row() const { return _r; }
 int Mat::col() const { return _c; }
 

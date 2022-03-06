@@ -1,17 +1,15 @@
 #ifndef __MAT_H
 #define __MAT_H
-#include <iostream>
 #include <vector>
-#include <cmath>
 #define ZHNMAT_VERSION                  "1.1.5"
 #define NAMESPACE_ZHNMAT_L              namespace zhnmat {
 #define NAMESPACE_ZHNMAT_R              }
+NAMESPACE_ZHNMAT_L
 #define MAT_ASSERT_ERROR(e, s)          if(!(e)){std::cout<<"Matrix Error: "<<s<<std::endl;abort();}
 #define MAT_ASSERT_WARNING(e, s)        if(!(e)){std::cout<<"Matrix Warning: "<<s<<std::endl;}
 #ifndef ABS
 #define ABS(x)                          ((x)>=0?(x):-(x))
 #endif
-NAMESPACE_ZHNMAT_L
 
 constexpr double EPSILON = 1e-12;
 enum GENERATE_TYPE {
@@ -28,7 +26,7 @@ class Mat;
 
 struct Vector3d
 {
-    Vector3d();
+    Vector3d(): _x(0), _y(0), _z(0) {};
     Vector3d(double x, double y, double z) :_x(x), _y(y), _z(z) {};
     Vector3d(const Vector3d& vec);
 
@@ -66,7 +64,7 @@ struct Rect
 class Mat
 {
 public:
-    Mat();
+    Mat() :_r(0), _c(0), _p(nullptr) {}
     Mat(const Mat& m, GENERATE_TYPE type=NORMAL);
     Mat(std::vector<double> data);
     Mat(int r, int c, double value=0);

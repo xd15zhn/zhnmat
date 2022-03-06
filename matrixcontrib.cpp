@@ -1,3 +1,5 @@
+#include <iostream>
+#include <cmath>
 #include "zhnmat.hpp"
 NAMESPACE_ZHNMAT_L
 
