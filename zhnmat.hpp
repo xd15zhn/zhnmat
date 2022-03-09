@@ -1,7 +1,7 @@
 #ifndef __MAT_H
 #define __MAT_H
 #include <vector>
-#define ZHNMAT_VERSION                  "1.1.5"
+#define ZHNMAT_VERSION                  "1.1.6"
 #define NAMESPACE_ZHNMAT_L              namespace zhnmat {
 #define NAMESPACE_ZHNMAT_R              }
 NAMESPACE_ZHNMAT_L
@@ -131,7 +131,11 @@ Vector3d Vec_vertical(const Vector3d &v1);
 // Return Identity matrix.
 Mat eye(int n);
 
-// Generate a Gaussian kernel with standard deviation and side length
+// Horizontal and vertical concatenate of two matrices.
+Mat HConcat(const Mat& m1, const Mat& m2);
+Mat VConcat(const Mat& m1, const Mat& m2);
+
+// Generate a Gaussian kernel with standard deviation and side length.
 Mat Gaussian_Kernel(double sigma, int sidelen);
 
 // Situation for padding=false is not finished yet.

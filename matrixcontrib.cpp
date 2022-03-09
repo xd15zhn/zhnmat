@@ -11,6 +11,31 @@ Mat eye(int n)
     return ans;
 }
 
+Mat HConcat(const Mat& m1, const Mat& m2)
+{
+    MAT_ASSERT_ERROR(m1.row()==m2.row(), "Horizontal concatenate size mismatch!");
+    Mat ans(m1.row(), m1.col()+m2.col());
+    for (int i=0; i<m1.row(); ++i)
+        for (int j=0; j<m1.col(); ++j)
+            ans.set(i, j, m1.at(i, j));
+    for (int i=0; i<m2.row(); ++i)
+        for (int j=0; j<m2.col(); ++j)
+            ans.set(i, j+m1.col(), m2.at(i, j));
+    return ans;
+}
+Mat VConcat(const Mat& m1, const Mat& m2)
+{
+    MAT_ASSERT_ERROR(m1.col()==m2.col(), "Vertical concatenate size mismatch!");
+    Mat ans(m1.row()+m2.row(), m1.col());
+    for (int i=0; i<m1.row(); ++i)
+        for (int j=0; j<m1.col(); ++j)
+            ans.set(i, j, m1.at(i, j));
+    for (int i=0; i<m2.row(); ++i)
+        for (int j=0; j<m2.col(); ++j)
+            ans.set(i+m1.row(), j, m2.at(i, j));
+    return ans;
+}
+
 Mat Gaussian_Kernel(double sigma, int sidelen)
 {
     constexpr double PI = 3.14159265358979323846;
