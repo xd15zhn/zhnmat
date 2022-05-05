@@ -3,6 +3,7 @@
 NAMESPACE_ZHNMAT_L
 
 unsigned char Mat::OutputFormat = USE_BRACKET | USE_SEMICOLON;
+double Mat::precision = 16;
 int Mat::row() const { return _r; }
 int Mat::col() const { return _c; }
 
@@ -363,9 +364,10 @@ input and output
 **********************/
 std::ostream& operator<<(std::ostream& os, const Mat& m)
 {
-    MAT_ASSERT_WARNING((Mat::OutputFormat&0xF8)==0, "Wrong format were given.");
+    MAT_ASSERT_WARNING((Mat::OutputFormat&0xF8)==0, "Wrong print format were given.");
     unsigned char opf = Mat::OutputFormat & 0x07;
-    os.precision(16);
+    MAT_ASSERT_WARNING(Mat::precision>=1, "Wrong print precision were given.");
+    os.precision(Mat::precision);
     if (opf & USE_BRACKET) os << "[";
     if (opf & WRAP_AROUND) os << std::endl;
     for (int i=0; i<m._r; ++i){

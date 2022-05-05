@@ -34,7 +34,6 @@ std::ostream& operator<<(std::ostream &os, const Vector3d& vec)
     return os;
 }
 
-
 double Vec_angle(Vector3d &v1, Vector3d &v2)
 {
     double v1norm = v1.norm2();

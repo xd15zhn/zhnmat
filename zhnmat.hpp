@@ -114,6 +114,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Mat& m);
     friend std::istream& operator>>(std::istream& is, Mat& m);  // Unfinished.
     static unsigned char OutputFormat;
+    static double precision;
 
 private:
     int _r, _c;
