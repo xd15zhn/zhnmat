@@ -19,6 +19,12 @@ Vector3d& Vector3d::Normalize(void)
 	_z /= len;
     return *this;
 }
+Vector3d Vector3d::Normalvector(void) const
+{
+	double len = norm2();
+    if (len==0) return Vector3d(1, 0, 0);
+    return Vector3d(_x/len, _y/len, _z/len);
+}
 
 Vector3d Vector3d::operator&(const Vector3d &vec)
 {

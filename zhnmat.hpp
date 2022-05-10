@@ -49,7 +49,10 @@ struct Vector3d
     friend std::ostream& operator<<(std::ostream &os, const Vector3d& vec);
     double norm2() const;
     Vector3d& Reset();
+    // Normalize this vector and return itself.
     Vector3d& Normalize();
+    // Return the normal vector of this vector.
+    Vector3d Normalvector() const;
     Vector3d& Reverse();
     double _x, _y, _z;
 };
@@ -110,6 +113,7 @@ public:
     Vector3d operator-(const Vector3d& vec) const;
 
     Mat& operator=(const Mat& m);
+    Mat& operator=(const Vector3d& vec);
     Mat operator()(const Rect& rect) const;
     friend std::ostream& operator<<(std::ostream& os, const Mat& m);
     friend std::istream& operator>>(std::istream& is, Mat& m);  // Unfinished.

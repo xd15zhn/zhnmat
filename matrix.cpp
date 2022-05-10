@@ -347,6 +347,23 @@ Mat& Mat::operator=(const Mat& m)
             _p[i][j] = m._p[i][j];
     return *this;
 }
+Mat& Mat::operator=(const Vector3d& vec)
+{
+    if (_r != 3 || _c != 1) {
+        if (_p != nullptr){
+            for (int i = 0; i < _r; ++i)
+                delete[] _p[i];
+            delete[] _p;
+        }
+        _r = 3;
+        _c = 1;
+        initialize();
+    }
+    _p[0][0] = vec._x;
+    _p[1][0] = vec._y;
+    _p[2][0] = vec._z;
+    return *this;
+}
 Mat Mat::operator()(const Rect &rect) const
 {
     MAT_ASSERT_ERROR(_r>0 && _c>0, "Matrix haven't been initialized!");
