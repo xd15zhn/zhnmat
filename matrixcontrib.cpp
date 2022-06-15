@@ -11,6 +11,15 @@ Mat eye(int n)
     return ans;
 }
 
+double AbsMat(const Mat& m)
+{
+    double square, ans = 0;
+    for (int i=0; i<m.row(); ++i)
+        for (int j=0; j<m.col(); ++j)
+            ans += m.at(i, j)*m.at(i, j);
+    return sqrt(ans);
+}
+
 Mat HConcat(const Mat& m1, const Mat& m2)
 {
     MAT_ASSERT_ERROR(m1.row()==m2.row(), "Horizontal concatenate size mismatch!");

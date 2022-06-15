@@ -1,7 +1,7 @@
 #ifndef __MAT_H
 #define __MAT_H
 #include <vector>
-#define ZHNMAT_VERSION                  "1.1.6"
+#define ZHNMAT_VERSION                  "1.1.7"
 #define NAMESPACE_ZHNMAT_L              namespace zhnmat {
 #define NAMESPACE_ZHNMAT_R              }
 NAMESPACE_ZHNMAT_L
@@ -135,6 +135,9 @@ Vector3d Vec_vertical(const Vector3d &v1);
 
 // Return Identity matrix.
 Mat eye(int n);
+
+// Return the Euclid length of a matrix.
+double AbsMat(const Mat& m);
 
 // Horizontal and vertical concatenate of two matrices.
 Mat HConcat(const Mat& m1, const Mat& m2);
