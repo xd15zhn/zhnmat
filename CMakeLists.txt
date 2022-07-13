@@ -13,4 +13,5 @@ install(EXPORT zhnmatConfig
     DESTINATION lib/cmake/zhnmat
 )
 INSTALL(FILES zhnmat.hpp
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/include/zhnmat)
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+
