@@ -1,7 +1,6 @@
 #ifndef __MAT_H
 #define __MAT_H
 #include <vector>
-#define ZHNMAT_VERSION                  "1.1.7"
 #define NAMESPACE_ZHNMAT_L              namespace zhnmat {
 #define NAMESPACE_ZHNMAT_R              }
 NAMESPACE_ZHNMAT_L

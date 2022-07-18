@@ -5,7 +5,7 @@
 ```cpp
 //main.cpp
 #include <iostream>
-#include "zhnmat/zhnmat.hpp"
+#include "zhnmat.hpp"
 using namespace std;
 using namespace zhnmat;
 int main()
@@ -17,7 +17,7 @@ int main()
 ```
 ```
 # CMakeLists.txt
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.12)
 project(untitled)
 set(CMAKE_BUILD_TYPE release)
 add_executable(${CMAKE_PROJECT_NAME}_exe main.cpp)

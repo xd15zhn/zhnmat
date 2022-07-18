@@ -72,12 +72,12 @@ Mat::~Mat()
 
 double Mat::at(int r, int c) const
 {
-    MAT_ASSERT_ERROR(r<=_r && c<=_c, "Indexes out of range!");
+    MAT_ASSERT_ERROR(r<_r && c<_c, "Indexes out of range!");
     return _p[r][c];
 }
 void Mat::set(int r, int c, double value)
 {
-    MAT_ASSERT_ERROR(r<=_r && c<=_c, "Indexes out of range!");
+    MAT_ASSERT_ERROR(r<_r && c<_c, "Indexes out of range!");
     _p[r][c]=value;
 }
 
