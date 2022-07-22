@@ -6,6 +6,7 @@ add_library(${CMAKE_PROJECT_NAME} STATIC matrix.cpp matrixcontrib.cpp vector3d.c
 if (WIN32)
     list(APPEND CMAKE_PREFIX_PATH "E:/cpplibraries/")
     set(CMAKE_INSTALL_LIBDIR ${CMAKE_PREFIX_PATH}lib)
+    set(CMAKE_INSTALL_INCLUDEDIR ${CMAKE_PREFIX_PATH}include)
 elseif (UNIX)
     include(GNUInstallDirs)
 endif ()
@@ -22,7 +23,7 @@ configure_package_config_file(
 )
 install(TARGETS ${PROJECT_NAME}
     EXPORT install_targets
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 install(EXPORT install_targets
     FILE ${PROJECT_NAME}Targets.cmake
@@ -30,7 +31,7 @@ install(EXPORT install_targets
     DESTINATION ${INSTALL_CONFIGDIR}
 )
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/zhnmat.hpp
-    DESTINATION ${CMAKE_PREFIX_PATH}/include/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
     DESTINATION ${INSTALL_CONFIGDIR}
