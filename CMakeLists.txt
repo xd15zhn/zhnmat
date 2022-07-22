@@ -2,17 +2,36 @@ cmake_minimum_required(VERSION 3.12)
 project(zhnmat VERSION 1.1.8)
 set(CMAKE_BUILD_TYPE release)
 add_library(${CMAKE_PROJECT_NAME} STATIC matrix.cpp matrixcontrib.cpp vector3d.cpp)
-message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 
-install(TARGETS zhnmat
-    EXPORT zhnmatConfig
-    ARCHIVE DESTINATION lib
+if (WIN32)
+    list(APPEND CMAKE_PREFIX_PATH "E:/cpplibraries/")
+    set(CMAKE_INSTALL_LIBDIR ${CMAKE_PREFIX_PATH}lib)
+elseif (UNIX)
+    include(GNUInstallDirs)
+endif ()
+set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+message(STATUS "CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
+message(STATUS "INSTALL_CONFIGDIR: ${INSTALL_CONFIGDIR}")
+message(STATUS "CMAKE_INSTALL_INCLUDEDIR: ${CMAKE_INSTALL_INCLUDEDIR}")
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+    INSTALL_DESTINATION ${INSTALL_CONFIGDIR}
 )
-install(EXPORT zhnmatConfig
-    FILE zhnmatConfig.cmake
-    NAMESPACE zhnmat::
-    DESTINATION lib/cmake/zhnmat
+install(TARGETS ${PROJECT_NAME}
+    EXPORT install_targets
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
 )
-INSTALL(FILES zhnmat.hpp
-    DESTINATION ${CMAKE_INSTALL_PREFIX}
+install(EXPORT install_targets
+    FILE ${PROJECT_NAME}Targets.cmake
+    NAMESPACE ${PROJECT_NAME}::
+    DESTINATION ${INSTALL_CONFIGDIR}
+)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/zhnmat.hpp
+    DESTINATION ${CMAKE_PREFIX_PATH}/include/
+)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+    DESTINATION ${INSTALL_CONFIGDIR}
 )
