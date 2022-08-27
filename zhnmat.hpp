@@ -11,10 +11,6 @@ NAMESPACE_ZHNMAT_L
 #endif
 
 constexpr double EPSILON = 1e-12;
-enum GENERATE_TYPE {
-    NORMAL,
-    DOWN_SAMPLE  // Generate downsample image pyramid.
-};
 enum OUTPUT_FORMAT {
     USE_BRACKET = 1 << 0,
     WRAP_AROUND = 1 << 1,
@@ -67,7 +63,7 @@ class Mat
 {
 public:
     Mat() :_r(0), _c(0), _p(nullptr) {}
-    Mat(const Mat& m, GENERATE_TYPE type=NORMAL);
+    Mat(const Mat& m);
     Mat(std::vector<double> data);
     Mat(int r, int c, double value=0);
     Mat(int r, int c, std::vector<double> data);

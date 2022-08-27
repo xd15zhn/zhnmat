@@ -16,22 +16,13 @@ void Mat::initialize()
         _p[i] = new double[_c];
 }
 
-Mat::Mat(const Mat& m, GENERATE_TYPE type)
+Mat::Mat(const Mat& m)
 {
-    if (type==NORMAL){
-        _r = m._r; _c = m._c;
-        initialize();
-        for (int i = 0; i < _r; ++i)
-            for (int j = 0; j < _c; ++j)
-                _p[i][j] = m._p[i][j];
-    }
-    else if (type==DOWN_SAMPLE){
-        _r = (m._r+1)>>1; _c = (m._c+1)>>1;
-        initialize();
-        for (int i = 0; i < _r; ++i)
-            for (int j = 0; j < _c; ++j)
-                _p[i][j] = m._p[i<<1][j<<1];
-    }
+    _r = m._r; _c = m._c;
+    initialize();
+    for (int i = 0; i < _r; ++i)
+        for (int j = 0; j < _c; ++j)
+            _p[i][j] = m._p[i][j];
 }
 Mat::Mat(std::vector<double> data)
 {

@@ -1,5 +1,3 @@
 set(zhnmat_VERSION @zhnmat_VERSION_MAJOR@.@zhnmat_VERSION_MINOR@.@zhnmat_VERSION_PATCH@)
-if (WIN32)
-    set(zhnmat_LIBS @CMAKE_PREFIX_PATH@lib/libzhnmat.a)
-    set(zhnmat_INCLUDE_DIRS @CMAKE_PREFIX_PATH@include/)
-endif ()
+set(zhnmat_LIBS @CMAKE_INSTALL_PREFIX@/lib/libzhnmat.a)
+set(zhnmat_INCLUDE_DIRS @CMAKE_INSTALL_PREFIX@/include/)
