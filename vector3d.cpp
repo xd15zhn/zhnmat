@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include "zhnmat.hpp"
+#include "utils.hpp"
 NAMESPACE_ZHNMAT_L
 
 Vector3d::Vector3d(const Vector3d &vec) { _x=vec._x, _y=vec._y, _z=vec._z; }
@@ -59,12 +60,12 @@ Vector3d& Vector3d::operator+=(const Vector3d &vec) { _x+=vec._x, _y+=vec._y, _z
 Vector3d& Vector3d::operator-=(const Vector3d &vec) { _x-=vec._x, _y-=vec._y, _z-=vec._z; return *this; }
 Vector3d Vector3d::operator+(const Mat& m) const
 {
-    MAT_ASSERT_ERROR(m.row()==3 && m.col()==1, "Size mismatch! Addition between vector and matrix.");
+    if (m.row()!=3 || m.col()!=1) TRACELOG(LOG_FATAL, "Size mismatch! Addition between vector and matrix.");
     return Vector3d(_x+m.at(0,0), _y+m.at(1,0), _z+m.at(2,0));
 };
 Vector3d Vector3d::operator-(const Mat& m) const
 {
-    MAT_ASSERT_ERROR(m.row()==3 && m.col()==1, "Size mismatch! Addition between vector and matrix.");
+    if (m.row()!=3 || m.col()!=1) TRACELOG(LOG_FATAL, "Size mismatch! Subtraction between vector and matrix.");
     return Vector3d(_x-m.at(0,0), _y-m.at(1,0), _z-m.at(2,0));
 };
 
@@ -77,7 +78,7 @@ double Vector3d::operator*(const Vector3d& vec) { return _x*vec._x + _y*vec._y +
 Vector3d& Vector3d::operator*=(double x) { _x*=x, _y*=x, _z*=x; return *this; }
 double Vector3d::operator*(const Mat& m)
 {
-    MAT_ASSERT_ERROR(m.row()==3 && m.col()==1, "Size mismatch! multiplication between vector and matrix.");
+    if (m.row()!=3 || m.col()!=1) TRACELOG(LOG_FATAL, "Size mismatch! multiplication between vector and matrix.");
     return _x*m.at(0,0) + _y*m.at(1,0) + _z*m.at(2,0);
 }
 

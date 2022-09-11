@@ -3,12 +3,10 @@
 #include <vector>
 #define NAMESPACE_ZHNMAT_L              namespace zhnmat {
 #define NAMESPACE_ZHNMAT_R              }
-NAMESPACE_ZHNMAT_L
-#define MAT_ASSERT_ERROR(e, s)          if(!(e)){std::cout<<"Matrix Error: "<<s<<std::endl;abort();}
-#define MAT_ASSERT_WARNING(e, s)        if(!(e)){std::cout<<"Matrix Warning: "<<s<<std::endl;}
 #ifndef ABS
 #define ABS(x)                          ((x)>=0?(x):-(x))
 #endif
+NAMESPACE_ZHNMAT_L
 
 constexpr double EPSILON = 1e-12;
 enum OUTPUT_FORMAT {

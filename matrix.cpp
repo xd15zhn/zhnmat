@@ -1,5 +1,6 @@
 #include <iostream>
 #include "zhnmat.hpp"
+#include "utils.hpp"
 NAMESPACE_ZHNMAT_L
 
 unsigned char Mat::OutputFormat = USE_BRACKET | USE_SEMICOLON;
@@ -9,8 +10,7 @@ int Mat::col() const { return _c; }
 
 void Mat::initialize()
 {
-    MAT_ASSERT_ERROR(_r>0 && _c>0,
-        "The number of rows and columns must be greater than 0!");
+    if (_r<=0 || _c<=0) TRACELOG(LOG_FATAL, "Rows and columns must be greater than 0!");
     _p = new double* [_r];
     for (int i = 0; i < _r; ++i)
         _p[i] = new double[_c];
@@ -42,8 +42,7 @@ Mat::Mat(int r, int c, double value)
 }
 Mat::Mat(int r, int c, std::vector<double> data)
 {
-    MAT_ASSERT_WARNING(r*c==(int)data.size(),
-        "The number of data you enter is not equal to the multiplication of rows and columns.");
+    if (r*c!=(int)data.size()) TRACELOG(LOG_WARNING, "Input data mismatch.");
     _r = r; _c = c;
     initialize();
     int cnt;
@@ -63,12 +62,16 @@ Mat::~Mat()
 
 double Mat::at(int r, int c) const
 {
-    MAT_ASSERT_ERROR(r<_r && c<_c, "Indexes out of range!");
+    if (r>=_r || c>=_c)
+        TRACELOG(LOG_FATAL, "Read indexes out of range!"
+        " Input rows and cols:%d,%d;  Max rows and cols:%d,%d.", r,c,_r,_c);
     return _p[r][c];
 }
 void Mat::set(int r, int c, double value)
 {
-    MAT_ASSERT_ERROR(r<_r && c<_c, "Indexes out of range!");
+    if (r>=_r || c>=_c)
+        TRACELOG(LOG_FATAL, "Write indexes out of range!"
+        " Input rows and cols:%d,%d;  Max rows and cols:%d,%d.", r,c,_r,_c);
     _p[r][c]=value;
 }
 
@@ -88,7 +91,7 @@ Mat Mat::T(int method)
 }
 Mat Mat::M()
 {
-    MAT_ASSERT_ERROR((_r==3) && (_c==1), "can't transform to antisymmetric matrix!");
+    if ((_r!=3) || (_c!=1)) TRACELOG(LOG_FATAL, "can't transform to antisymmetric matrix!");
     Mat ans(3, 3);
     ans._p[1][2] = -_p[0][0];
     ans._p[0][2] = +_p[1][0];
@@ -100,7 +103,7 @@ Mat Mat::M()
 }
 Mat Mat::inv(int method)
 {
-    MAT_ASSERT_ERROR(_r==_c, "can't reverse non-square matrix!");
+    if (_r!=_c) TRACELOG(LOG_FATAL, "can't reverse non-square matrix!");
     Mat copy(*this), ans=eye(_r);
     if (method==0) {
         double max;  // Maximum value per column
@@ -168,9 +171,9 @@ Mat Mat::inv(int method)
 
 std::vector<double> Mat::Solve_LinearEqution(const std::vector<double> m)
 {
-    MAT_ASSERT_ERROR((int)m.size()==_c, "Size mismatch!");
-    MAT_ASSERT_ERROR(_r==_c, "Square matrix required, or use Solve_LeastSquare() instead.");
-    MAT_ASSERT_ERROR(_r==2, "Matrix dimention must be at least 2!");
+    if ((int)m.size()!=_c) TRACELOG(LOG_FATAL, "Size mismatch!");
+    if (_r!=_c) TRACELOG(LOG_FATAL, "Square matrix required, or use Solve_LeastSquare() instead.");
+    if (_r<2) TRACELOG(LOG_FATAL, "Matrix dimention must be at least 2!");
     double max;  // Maximum value per column
     short row;  // Row number of maximum value per column
     double *temp = new double[_r];
@@ -213,7 +216,7 @@ std::vector<double> Mat::Solve_LinearEqution(const std::vector<double> m)
 
 std::vector<double> Mat::Solve_LeastSquare(const std::vector<double> m)
 {
-    MAT_ASSERT_ERROR((int)m.size()==_c, "Size mismatch!");
+    if ((int)m.size()!=_c) TRACELOG(LOG_FATAL, "Size mismatch!");
     std::vector<double> ans=m;
     return ans;
 }
@@ -232,7 +235,7 @@ Mat Mat::operator*(double n) const
 }
 Mat Mat::operator*(const Mat& m) const
 {
-    MAT_ASSERT_ERROR(_c==m._r, "Size mismatch! Multiplication between matrix.");
+    if (_c!=m._r) TRACELOG(LOG_FATAL, "Size mismatch! Multiplication between matrix.");
     Mat ans(_r, m._c);
     for (int i = 0; i < _r; ++i)
         for (int j = 0; j < m._c; ++j)
@@ -242,7 +245,7 @@ Mat Mat::operator*(const Mat& m) const
 }
 Vector3d Mat::operator*(const Vector3d &vec) const
 {
-    MAT_ASSERT_ERROR(_r==3 && _c==3, "Size mismatch! Multiplication between matrix and vector.");
+    if (_r!=3 || _c!=3) TRACELOG(LOG_FATAL, "Size mismatch! Multiplication between matrix and vector.");
     Vector3d ans;
     ans._x = _p[0][0]*vec._x + _p[0][1]*vec._y + _p[0][2]*vec._z;
     ans._y = _p[1][0]*vec._x + _p[1][1]*vec._y + _p[1][2]*vec._z;
@@ -259,7 +262,7 @@ Mat& Mat::operator*=(double n)
 }
 Mat& Mat::operator*=(const Mat& m)
 {
-    MAT_ASSERT_ERROR(_c==m._r, "Size mismatch! Multiplication between matrix.");
+    if (_c!=m._r) TRACELOG(LOG_FATAL, "Size mismatch! Multiplication between matrix.");
     Mat temp(_r, m._c);
     for (int i = 0; i < temp._r; ++i)
         for (int j = 0; j < temp._c; ++j)
@@ -274,7 +277,7 @@ operator addition and subtraction
 **********************/
 Mat Mat::operator+(const Mat& m) const
 {
-    MAT_ASSERT_ERROR(_r==m._r && _c==m._c, "Size mismatch! Addition between matrix.");
+    if (_r!=m._r || _c!=m._c) TRACELOG(LOG_FATAL, "Size mismatch! Addition between matrix.");
     Mat ans(_r, _c, 0.0);
     for (int i = 0; i < _r; ++i)
         for (int j = 0; j < m._c; ++j)
@@ -283,7 +286,7 @@ Mat Mat::operator+(const Mat& m) const
 }
 Mat Mat::operator-(const Mat& m) const
 {
-    MAT_ASSERT_ERROR(_r==m._r && _c==m._c, "Size mismatch! Subtraction between matrix.");
+    if (_r!=m._r || _c!=m._c) TRACELOG(LOG_FATAL, "Size mismatch! Subtraction between matrix.");
     Mat ans(_r, _c, 0.0);
     for (int i = 0; i < _r; ++i)
         for (int j = 0; j < m._c; ++j)
@@ -292,7 +295,7 @@ Mat Mat::operator-(const Mat& m) const
 }
 Mat& Mat::operator+=(const Mat& m)
 {
-    MAT_ASSERT_ERROR(_r==m._r && _c==m._c, "Size mismatch! Addition between matrix.");
+    if (_r!=m._r || _c!=m._c) TRACELOG(LOG_FATAL, "Size mismatch! Addition between matrix.");
     for (int i = 0; i < _r; ++i)
         for (int j = 0; j < _c; ++j)
             _p[i][j] += m._p[i][j];
@@ -300,7 +303,7 @@ Mat& Mat::operator+=(const Mat& m)
 }
 Mat& Mat::operator-=(const Mat& m)
 {
-    MAT_ASSERT_ERROR(_r==m._r && _c==m._c, "Size mismatch! Subtraction between matrix.");
+    if (_r!=m._r || _c!=m._c) TRACELOG(LOG_FATAL, "Size mismatch! Subtraction between matrix.");
     for (int i = 0; i < _r; ++i)
         for (int j = 0; j < _c; ++j)
             _p[i][j] -= m._p[i][j];
@@ -308,12 +311,12 @@ Mat& Mat::operator-=(const Mat& m)
 }
 Vector3d Mat::operator+(const Vector3d& vec) const
 {
-    MAT_ASSERT_ERROR(_r==3 && _c==1, "Size mismatch! Addition between matrix and vector.");
+    if (_r!=3 || _c!=1) TRACELOG(LOG_FATAL, "Size mismatch! Addition between matrix and vector.");
     return Vector3d(_p[0][0] + vec._x, _p[1][0] + vec._y, _p[2][0] + vec._z);
 };
 Vector3d Mat::operator-(const Vector3d& vec) const
 {
-    MAT_ASSERT_ERROR(_r==3 && _c==1, "Size mismatch! Subtraction between matrix and vector.");
+    if (_r!=3 || _c!=1) TRACELOG(LOG_FATAL, "Size mismatch! Subtraction between matrix and vector.");
     return Vector3d(_p[0][0] - vec._x, _p[1][0] - vec._y, _p[2][0] - vec._z);
 };
 
@@ -357,9 +360,9 @@ Mat& Mat::operator=(const Vector3d& vec)
 }
 Mat Mat::operator()(const Rect &rect) const
 {
-    MAT_ASSERT_ERROR(_r>0 && _c>0, "Matrix haven't been initialized!");
-    MAT_ASSERT_ERROR(rect._w>0 && rect._h>0, "Rect error!");
-    MAT_ASSERT_ERROR(_r>=rect._w && _c>=rect._h, "Rect out of range!");
+    if (_r<=0 || _c<=0) TRACELOG(LOG_FATAL, "Matrix haven't been initialized!");
+    if (rect._w<=0 && rect._h<=0) TRACELOG(LOG_FATAL, "Rect error!");
+    if (_r<rect._w || _c<rect._h) TRACELOG(LOG_FATAL, "Rect out of range!");
     Mat ans(rect._h, rect._w);
     for (int i = 0; i < ans._r; ++i)
         for (int j = 0; j < ans._c; ++j)
@@ -372,9 +375,10 @@ input and output
 **********************/
 std::ostream& operator<<(std::ostream& os, const Mat& m)
 {
-    MAT_ASSERT_WARNING((Mat::OutputFormat&0xF8)==0, "Wrong print format were given.");
+    if ((Mat::OutputFormat&0xF8)!=0) TRACELOG(LOG_WARNING, "Wrong print format were given.");
     unsigned char opf = Mat::OutputFormat & 0x07;
-    MAT_ASSERT_WARNING(Mat::precision>=1, "Wrong print precision were given.");
+    if (Mat::precision<=1) TRACELOG(LOG_WARNING, "Wrong print precision were given.");
+    
     os.precision(Mat::precision);
     if (opf & USE_BRACKET) os << "[";
     if (opf & WRAP_AROUND) os << std::endl;

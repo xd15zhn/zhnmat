@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include "zhnmat.hpp"
+#include "utils.hpp"
 NAMESPACE_ZHNMAT_L
 
 Mat eye(int n)
@@ -22,7 +23,7 @@ double AbsMat(const Mat& m)
 
 Mat HConcat(const Mat& m1, const Mat& m2)
 {
-    MAT_ASSERT_ERROR(m1.row()==m2.row(), "Horizontal concatenate size mismatch!");
+    if (m1.row()!=m2.row()) TRACELOG(LOG_FATAL, "Horizontal concatenate size mismatch!");
     Mat ans(m1.row(), m1.col()+m2.col());
     for (int i=0; i<m1.row(); ++i)
         for (int j=0; j<m1.col(); ++j)
@@ -34,7 +35,7 @@ Mat HConcat(const Mat& m1, const Mat& m2)
 }
 Mat VConcat(const Mat& m1, const Mat& m2)
 {
-    MAT_ASSERT_ERROR(m1.col()==m2.col(), "Vertical concatenate size mismatch!");
+    if (m1.col()!=m2.col()) TRACELOG(LOG_FATAL, "Vertical concatenate size mismatch!");
     Mat ans(m1.row()+m2.row(), m1.col());
     for (int i=0; i<m1.row(); ++i)
         for (int j=0; j<m1.col(); ++j)
@@ -48,7 +49,7 @@ Mat VConcat(const Mat& m1, const Mat& m2)
 Mat Gaussian_Kernel(double sigma, int sidelen)
 {
     constexpr double PI = 3.14159265358979323846;
-    MAT_ASSERT_WARNING(sidelen%2==1, "Side length of Gaussian kernel should be an odd number.");
+    if (sidelen%2==0) TRACELOG(LOG_WARNING, "Side length of Gaussian kernel should be an odd number.");
     Mat ans(sidelen, sidelen);
     sidelen >>= 1;
     double div = 0.5/(sigma*sigma);
@@ -61,8 +62,8 @@ Mat Gaussian_Kernel(double sigma, int sidelen)
 
 Mat Convolution(const Mat& m, const Mat& kernel, bool padding)
 {
-    MAT_ASSERT_ERROR(m.row()>=kernel.row(), "Size of kernel nust be equal or less than matrix.");
-    MAT_ASSERT_ERROR(m.col()>=kernel.col(), "Size of kernel nust be equal or less than matrix.");
+    if (m.row()<kernel.row()) TRACELOG(LOG_WARNING, "Size of kernel nust be equal or less than matrix.");
+    if (m.col()<kernel.col()) TRACELOG(LOG_WARNING, "Size of kernel nust be equal or less than matrix.");
     int r = m.row(), c = m.col();
     int pad = kernel.row()>>1;
     double pixel;
