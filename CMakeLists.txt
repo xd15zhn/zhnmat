@@ -1,7 +1,14 @@
 cmake_minimum_required(VERSION 3.12)
-project(zhnmat VERSION 1.2.0)
+project(zhnmat VERSION 1.2.1)
 set(CMAKE_BUILD_TYPE release)
-add_library(${CMAKE_PROJECT_NAME} STATIC matrix.cpp matrixcontrib.cpp vector3d.cpp)
+message(STATUS "project name: ${CMAKE_PROJECT_NAME}")
+message(STATUS "project version: ${PROJECT_VERSION}")
+message(STATUS "project build type: ${CMAKE_BUILD_TYPE}")
+add_library(${CMAKE_PROJECT_NAME} STATIC
+    matrix.cpp
+    vector3d.cpp
+    extra.cpp
+)
 
 if (WIN32)
     set(CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)

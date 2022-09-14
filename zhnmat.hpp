@@ -79,9 +79,6 @@ public:
     // Method 1 unfinished.
     Mat T(int method=0);
 
-    // Transform to antisymmetric matrix. It requires the matrix to be size of 3-by-1.
-    Mat M();
-
     // Inverse. method: 0 for Gaussian Elimination; 1 for LU decompose.
     // Method 1 unfinished.
     Mat inv(int method=0);
@@ -92,6 +89,7 @@ public:
 
     // operator
     Mat operator*(double n) const;
+    Mat operator/(double n) const;
     Mat operator*(const Mat& m) const;
     Vector3d operator*(const Vector3d& vec) const;
     friend Mat operator*(double n, const Mat& m);
@@ -120,6 +118,10 @@ private:
     Mat L(), U();
 };
 
+/**********************
+functions below can be removed when building the project to save space.
+**********************/
+#pragma region extra
 // Return angle between two vectors.
 double Vec_angle(Vector3d &v1, Vector3d &v2);
 
@@ -128,6 +130,9 @@ Vector3d Vec_vertical(const Vector3d &v1);
 
 // Return Identity matrix.
 Mat eye(int n);
+
+// Transform to antisymmetric matrix. It requires the matrix to be size of 3-by-1.
+Mat Antisymmetric(const Mat& m);
 
 // Return the Euclid length of a matrix.
 double AbsMat(const Mat& m);
@@ -141,6 +146,7 @@ Mat Gaussian_Kernel(double sigma, int sidelen);
 
 // Situation for padding=false is not finished yet.
 Mat Convolution(const Mat& m, const Mat& kernel, bool padding=true);
+#pragma endregion extra
 
 NAMESPACE_ZHNMAT_R
 #endif
