@@ -19,11 +19,13 @@ class Mat;
 
 struct Vector3d
 {
-    Vector3d(): _x(0), _y(0), _z(0) {};
-    Vector3d(double x, double y, double z) :_x(x), _y(y), _z(z) {};
+    // constructor function
+    Vector3d();
+    Vector3d(double x, double y, double z);
     Vector3d(const Vector3d& vec);
+    Vector3d& operator=(const Vector3d& vec);
 
-    // operator
+    // operator addition and subtraction
     Vector3d operator+(const Vector3d& vec) const;
     Vector3d operator-(const Vector3d& vec) const;
     Vector3d& operator+=(const Vector3d& vec);
@@ -31,22 +33,22 @@ struct Vector3d
     Vector3d operator+(const Mat& m) const;
     Vector3d operator-(const Mat& m) const;
 
-    Vector3d operator*(double x) const;
-    friend Vector3d operator*(double n, const Vector3d& m);
-    double operator*(const Vector3d& vec);
-    double operator*(const Mat& m);
-    Vector3d& operator*=(double x);
+    // operator multiplication
+    Vector3d operator*(double x) const;  // vector scalar multiplication
+    Vector3d operator/(double x) const;  // vector scalar division
+    friend Vector3d operator*(double n, const Vector3d& m);  // vector scalar multiplication
+    double operator*(const Vector3d& vec);  // vector dot product
+    double operator*(const Mat& m);  // vector dot product
+    Vector3d& operator*=(double x);  // vector scalar multiplication
+    Vector3d& operator/=(double x);  // vector scalar division
 
-    Vector3d operator&(const Vector3d& vec);
-    Vector3d& operator=(const Vector3d& vec);
+    Vector3d operator&(const Vector3d& vec);  // vector cross product
     friend std::ostream& operator<<(std::ostream &os, const Vector3d& vec);
-    double norm2() const;
     Vector3d& Reset();
-    // Normalize this vector and return itself.
-    Vector3d& Normalize();
-    // Return the normal vector of this vector.
-    Vector3d Normalvector() const;
     Vector3d& Reverse();
+    double norm2() const;
+    Vector3d Normalvector() const;  // Return the normal vector of this vector.
+    Vector3d& Normalize();  // Normalize this vector and return itself.
     double _x, _y, _z;
 };
 
@@ -60,7 +62,7 @@ struct Rect
 class Mat
 {
 public:
-    Mat() :_r(0), _c(0), _p(nullptr) {}
+    Mat();
     Mat(const Mat& m);
     Mat(std::vector<double> data);
     Mat(int r, int c, double value=0);
@@ -124,9 +126,6 @@ functions below can be removed when building the project to save space.
 #pragma region extra
 // Return angle between two vectors.
 double Vec_angle(Vector3d &v1, Vector3d &v2);
-
-// Returns a vector perpendicular to the current vector and parallel to the ground.
-Vector3d Vec_vertical(const Vector3d &v1);
 
 // Return Identity matrix.
 Mat eye(int n);

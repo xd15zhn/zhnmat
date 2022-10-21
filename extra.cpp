@@ -4,6 +4,16 @@
 #include "utils.hpp"
 NAMESPACE_ZHNMAT_L
 
+double Vec_angle(Vector3d &v1, Vector3d &v2)
+{
+    double v1norm = v1.norm2();
+    double v2norm = v2.norm2();
+    if (v1norm==0 || v2norm==0)
+        return 0;
+    double ans = (v1*v2) / v1norm / v2norm;
+    return (ans<-1) ? -1 : ((ans>1) ? 1 : ans);
+}
+
 Mat eye(int n)
 {
     Mat ans(n, n);
