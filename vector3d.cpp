@@ -8,6 +8,10 @@ Vector3d::Vector3d(): _x(0), _y(0), _z(0) {};
 Vector3d::Vector3d(double x, double y, double z) :_x(x), _y(y), _z(z) {};
 Vector3d::Vector3d(const Vector3d &vec) { _x=vec._x, _y=vec._y, _z=vec._z; }
 Vector3d& Vector3d::operator=(const Vector3d &vec) { _x=vec._x, _y=vec._y, _z=vec._z; return *this; }
+Vector3d& Vector3d::operator=(const Mat& m) {
+    if (m.row()!=3 || m.col()!=1) TRACELOG(LOG_FATAL, "Size mismatch in equation constructor!");
+    _x=m.at(0,0), _y=m.at(1,0), _z=m.at(2,0); return *this;
+}
 
 /**********************
 operator addition and subtraction
@@ -69,9 +73,7 @@ Vector3d& Vector3d::Normalize(void)
 {
 	double len = norm2();
     if (len==0) return *this;
-    _x /= len;
-	_y /= len;
-	_z /= len;
+    _x /= len; _y /= len; _z /= len;
     return *this;
 }
 

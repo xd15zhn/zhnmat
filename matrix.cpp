@@ -277,8 +277,7 @@ Mat& Mat::operator=(const Mat& m)
                 delete[] _p[i];
             delete[] _p;
         }
-        _r = m._r;
-        _c = m._c;
+        _r = m._r; _c = m._c;
         initialize();
     }
     for (int i = 0; i < _r; ++i)
@@ -294,8 +293,7 @@ Mat& Mat::operator=(const Vector3d& vec)
                 delete[] _p[i];
             delete[] _p;
         }
-        _r = 3;
-        _c = 1;
+        _r = 3; _c = 1;
         initialize();
     }
     _p[0][0] = vec._x;
@@ -335,13 +333,6 @@ std::ostream& operator<<(std::ostream& os, const Mat& m)
     }
     if (opf & USE_BRACKET) os << "]";
     return os;
-}
-std::istream& operator>>(std::istream& is, Mat& m)
-{
-    for (int i=0; i<m._r; i++)
-        for (int j=0; j<m._r; j++)
-            is >> m._p[i][j];
-    return is;
 }
 
 NAMESPACE_ZHNMAT_R

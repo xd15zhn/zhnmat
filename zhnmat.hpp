@@ -24,6 +24,7 @@ struct Vector3d
     Vector3d(double x, double y, double z);
     Vector3d(const Vector3d& vec);
     Vector3d& operator=(const Vector3d& vec);
+    Vector3d& operator=(const Mat& m);
 
     // operator addition and subtraction
     Vector3d operator+(const Vector3d& vec) const;
@@ -109,7 +110,6 @@ public:
     Mat& operator=(const Vector3d& vec);
     Mat operator()(const Rect& rect) const;
     friend std::ostream& operator<<(std::ostream& os, const Mat& m);
-    friend std::istream& operator>>(std::istream& is, Mat& m);  // Unfinished.
     static unsigned char OutputFormat;
     static double precision;
 

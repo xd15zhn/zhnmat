@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(zhnmat VERSION 1.2.2)
+project(zhnmat VERSION 1.2.3)
 set(CMAKE_BUILD_TYPE release)
 message(STATUS "project name: ${CMAKE_PROJECT_NAME}")
 message(STATUS "project version: ${PROJECT_VERSION}")
