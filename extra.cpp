@@ -4,6 +4,7 @@
 #include "utils.hpp"
 NAMESPACE_ZHNMAT_L
 
+#ifdef USE_EXTRA
 double Vec_angle(Vector3d &v1, Vector3d &v2)
 {
     double v1norm = v1.norm2();
@@ -13,6 +14,7 @@ double Vec_angle(Vector3d &v1, Vector3d &v2)
     double ans = (v1*v2) / v1norm / v2norm;
     return (ans<-1) ? -1 : ((ans>1) ? 1 : ans);
 }
+
 
 Mat eye(int n)
 {
@@ -59,49 +61,98 @@ Mat VConcat(const Mat& m1, const Mat& m2)
             ans.set(i+m1.row(), j, m2.at(i, j));
     return ans;
 }
+#endif
 
-std::vector<double> Mat::Solve_LinearEqution(const std::vector<double> m)
+
+/**********************
+QR分解
+**********************/
+// 列向量的2-范数
+double Vector_Norm2(const double *v, const short len) {
+	double ans = 0;
+	for (short i = 0; i < len; i++)
+		ans += v[i] * v[i];
+	return sqrt(ans);
+}
+//求使向量v变换到基向量的法向量u,返回u的1/2模平方,len为两个向量的维度
+double Vector_Normal(double *u, const double *v, const short len) {
+	for (short i = 0; i < len; i++)
+		u[i] = v[i];
+	double sigma = Vector_Norm2(u, len);
+	if (u[0] < 0)
+		sigma = -sigma;
+	double rho = sigma*(sigma + u[0]);
+	u[0] += sigma;
+	return rho;
+}
+//豪斯霍尔德矩阵法求矩阵m的拟上三角矩阵
+Mat Matrix_Hessenberg(Mat m) {
+    Mat ans(m);
+	double rho, dotsum;
+	double u[m.row()-1];  // Householder变换阵的法向量
+	double v[m.row()-1];  // 组成下三角阵的列向量
+	for (short h = 0; h < m.row()-2; h++) {  // H矩阵编号
+		for (short i = h; i < m.row()-1; i++)
+			v[i] = m.at(i+1, h);  // 提取列向量
+		rho = Vector_Normal(u+h, v + h, m.row() - h-1);  // 确定出对应阶数的H矩阵
+		for (short j = 0; j < m.row(); j++) {  // 每一列分别左乘H矩阵
+			dotsum = 0;
+			for (short i = h; i < m.row()-1; i++)
+				dotsum += u[i] * m.at(i+1, j);  // 点乘
+			dotsum /= rho;
+			for (short i = h; i < m.row()-1; i++)
+                m.set(i+1, j, m.at(i+1, j)-dotsum*u[i]);
+		}
+		for (short i = 0; i < m.row(); i++) {  //每一行分别右乘H矩阵
+			dotsum = 0;
+			for (short j = h; j < m.row()-1; j++)
+				dotsum += u[j] * m.at(i, j+1);
+			dotsum /= rho;
+			for (short j = h; j < m.row()-1; j++)
+                m.set(i, j+1, m.at(i, j+1)-dotsum*u[j]);
+		}
+	}
+    return ans;
+}
+//将拟上三角矩阵M分别左右乘其豪斯霍尔德矩阵H,并覆盖
+Mat Matrix_Householder(Mat m)
 {
-    if ((int)m.size()!=_c) TRACELOG(LOG_FATAL, "Size mismatch!");
-    if (_r!=_c) TRACELOG(LOG_FATAL, "Square matrix required, or use Solve_LeastSquare() instead.");
-    if (_r<2) TRACELOG(LOG_FATAL, "Matrix dimention must be at least 2!");
-    double max;  // Maximum value per column
-    short row;  // Row number of maximum value per column
-    double *temp = new double[_r];
-    std::vector<double> ans(_r);
-    for (short j = 0; j < _r - 1; j++) {  // j is the reference column
-        // Find maximum value and its row numper
-        max = ABS(_p[j][j]);
-        row = j;
-        for (short i = j+1; i < _r; i++) {
-            if (ABS(_p[i][j]) > max) {
-                max = ABS(_p[i][j]);
-                row = i;
-            }
-        }
-        // Change row of maximum value with first row
-        if (row != j) {
-            for (short i = j; i < _r; i++)
-                temp[i] = _p[row][i];
-            for (short i = j; i < _r; i++)
-                _p[row][i] = _p[j][i];
-            for (short i = j; i < _r; i++)
-                _p[j][i] = temp[i];
-        }
-        //Start column elimination, that is, clear one column except the maximum row at a time
-        for (short i = j + 1; i < _r; i++)
-            for (short k = j + 1; k < _r; k++)
-                _p[i][k] -= _p[i][j] / _p[j][j] * _p[j][k];
-    }
-    delete[] temp;
-    //特征矩阵一定是降秩的,设特征向量的最后一个元素为1,从特征矩阵的倒数第二行开始回代
-    ans[_r - 1] = 1;
-    for (short i = _r - 2; i >= 0; i--) {
-        ans[i] = 0;
-        for (short j = _r - 1; j > i; j--)
-            ans[i] -= _p[i][j] * ans[j];
-        ans[i] /= _p[i][i];
-    }
+    Mat ans(m);
+	double rho, dotsum;
+	double u[2];
+	double v[2];
+	double U[3][m.row()-1];
+	for (short h = 0; h < m.row()-1; h++)
+	{
+		v[0] = m.at(h, h);
+		v[1] = m.at(h+1, h);
+		rho = Vector_Normal(u, v, 2);
+		U[0][h] = u[0];
+		U[1][h] = u[1];
+		U[2][h] = rho;
+		for (short j = 0; j < m.row(); j++)
+		{
+			dotsum = u[0] * m.at(h, j);
+			dotsum += u[1] * m.at(h+1, j);
+			dotsum /= rho;
+            ans.set(h, j, m.at(h, j)-dotsum*u[0]);
+            ans.set(h+1, j, m.at(h+1, j)-dotsum*u[1]);
+		}
+	}
+	for (short h = 0; h < m.row()-1; h++)
+	{
+		u[0] = U[0][h];
+		u[1] = U[1][h];
+		rho = U[2][h];
+		for (short i = 0; i < m.row(); i++)
+		{
+			dotsum = u[0] * m.at(i, h);
+			dotsum += u[1] * m.at(i, h+1);
+			dotsum /= rho;
+            ans.set(i, h, m.at(i, h)-dotsum*u[0]);
+            ans.set(i, h+1, m.at(i, h+1)-dotsum*u[1]);
+		}
+	}
     return ans;
 }
 

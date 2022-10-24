@@ -85,7 +85,61 @@ Mat Mat::T()
 
 Mat Mat::inv()
 {
-    Mat ans;
+    if (_r!=_c) TRACELOG(LOG_FATAL, "can't reverse non-square matrix!");
+    Mat copy(*this), ans(_r, _r);
+    for (int i=0; i<_r; ++i) ans.set(i, i, 1);
+    double max;  // Maximum value per column
+    short row;  // Row number of maximum value per column
+    double *temp = new double[_r];
+    double k1;
+    for (short j = 0; j < _r - 1; j++) {  // j is the reference column
+        // Find maximum value of column and its row numper
+        max = ABS(copy._p[j][j]);
+        row = j;
+        for (short i = j+1; i < _r; i++) {
+            if (ABS(_p[i][j]) > max) {
+                max = ABS(copy._p[i][j]);
+                row = i;
+            }
+        }
+        // Change row of maximum value with first row
+        if (row != j) {
+            for (short i = j; i < _r; i++)
+                temp[i] = copy._p[row][i];
+            for (short i = j; i < _r; i++)
+                copy._p[row][i] = copy._p[j][i];
+            for (short i = j; i < _r; i++)
+                copy._p[j][i] = temp[i];
+            for (short i = j; i < _r; i++)
+                temp[i] = ans._p[row][i];
+            for (short i = j; i < _r; i++)
+                ans._p[row][i] = ans._p[j][i];
+            for (short i = j; i < _r; i++)
+                ans._p[j][i] = temp[i];
+        }
+        //Start column elimination, that is, clear one column except the maximum row at a time
+        for (short i = j + 1; i < _r; i++) {
+            k1 = copy._p[i][j] / copy._p[j][j];
+            copy._p[i][j] = 0;
+            for (short k = 0; k < _r; k++) {
+                copy._p[i][k] -= k1 * copy._p[j][k];
+                ans._p[i][k] -= k1 * ans._p[j][k];
+            }
+        }
+    }
+    delete[] temp;
+    for (short j=_r-1; j>=0; --j) {
+        k1 = 1 / copy._p[j][j];
+        copy._p[j][j] = 1;
+        for (short k=0; k<_r; ++k)
+            ans._p[j][k] *= k1;
+        if (j == 0) break;
+        for (short i=j-1; i>=0; --i) {
+            k1 = copy._p[i][j] / copy._p[j][j];
+            for (short k=0; k<_r; ++k)
+                ans._p[i][k] -= k1 * ans._p[j][k];
+        }
+    }
     return ans;
 }
 
