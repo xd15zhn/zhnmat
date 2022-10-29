@@ -3,9 +3,6 @@
 #include <vector>
 #define NAMESPACE_ZHNMAT_L              namespace zhnmat {
 #define NAMESPACE_ZHNMAT_R              }
-#ifndef ABS
-#define ABS(x)                          ((x)>=0?(x):-(x))
-#endif
 NAMESPACE_ZHNMAT_L
 
 constexpr double EPSILON = 1e-12;

@@ -2,9 +2,13 @@
 #include "zhnmat.hpp"
 #include "utils.hpp"
 NAMESPACE_ZHNMAT_L
+#define DELTA_ZERO                      1e-12
+#ifndef ABS
+#define ABS(x)                          ((x)>=0?(x):-(x))
+#endif
 
 unsigned char Mat::OutputFormat = USE_BRACKET | USE_SEMICOLON;
-double Mat::precision = 16;
+double Mat::precision = 15;
 Mat::Mat() :_r(0), _c(0), _p(nullptr) {}
 int Mat::row() const { return _r; }
 int Mat::col() const { return _c; }
@@ -83,59 +87,57 @@ Mat Mat::T()
     return ans;
 }
 
+/*初等变换法求逆矩阵*/
 Mat Mat::inv()
 {
     if (_r!=_c) TRACELOG(LOG_FATAL, "can't reverse non-square matrix!");
     Mat copy(*this), ans(_r, _r);
     for (int i=0; i<_r; ++i) ans.set(i, i, 1);
-    double max;  // Maximum value per column
-    short row;  // Row number of maximum value per column
-    double *temp = new double[_r];
+    double max;  // 每一列的最大值
+    double absvalue;  // 绝对值暂存
+    short row;  // 每一列最大值的行号
+    double temp;  // 交换两行时暂存
     double k1;
-    for (short j = 0; j < _r - 1; j++) {  // j is the reference column
-        // Find maximum value of column and its row numper
-        max = ABS(copy._p[j][j]);
-        row = j;
+    /* 化为上三角矩阵 */
+    for (short j = 0; j < _r - 1; j++) {  // 第j列
+        max = ABS(copy._p[j][j]); row = j;
         for (short i = j+1; i < _r; i++) {
-            if (ABS(_p[i][j]) > max) {
-                max = ABS(copy._p[i][j]);
-                row = i;
+            absvalue = ABS(copy._p[i][j]);
+            if (absvalue > max) {  // 寻找每一列的最大值和对应的行号
+                max = absvalue; row = i;
             }
         }
-        // Change row of maximum value with first row
+        // 将第j列最大值所在的行与第j行交换
         if (row != j) {
-            for (short i = j; i < _r; i++)
-                temp[i] = copy._p[row][i];
-            for (short i = j; i < _r; i++)
+            for (short i = j; i < _r; i++) {
+                temp = copy._p[row][i];
                 copy._p[row][i] = copy._p[j][i];
-            for (short i = j; i < _r; i++)
-                copy._p[j][i] = temp[i];
-            for (short i = j; i < _r; i++)
-                temp[i] = ans._p[row][i];
-            for (short i = j; i < _r; i++)
+                copy._p[j][i] = temp;
+            }
+            for (short i = 0; i < _r; i++) {
+                temp = ans._p[row][i];
                 ans._p[row][i] = ans._p[j][i];
-            for (short i = j; i < _r; i++)
-                ans._p[j][i] = temp[i];
+                ans._p[j][i] = temp;
+            }
         }
-        //Start column elimination, that is, clear one column except the maximum row at a time
+        // 开始按列消元,即每次将除最大值行以外的一列清零
         for (short i = j + 1; i < _r; i++) {
             k1 = copy._p[i][j] / copy._p[j][j];
-            copy._p[i][j] = 0;
-            for (short k = 0; k < _r; k++) {
+            for (short k = j; k < _r; k++)
                 copy._p[i][k] -= k1 * copy._p[j][k];
+            for (short k = 0; k < _r; k++)
                 ans._p[i][k] -= k1 * ans._p[j][k];
-            }
         }
     }
-    delete[] temp;
+    if (ABS(copy._p[_r-1][_c-1]) < DELTA_ZERO) TRACELOG(LOG_FATAL, "Singular matrix!");
+    /* 将上三角矩阵化为单位阵 */
     for (short j=_r-1; j>=0; --j) {
         k1 = 1 / copy._p[j][j];
-        copy._p[j][j] = 1;
         for (short k=0; k<_r; ++k)
             ans._p[j][k] *= k1;
         if (j == 0) break;
         for (short i=j-1; i>=0; --i) {
-            k1 = copy._p[i][j] / copy._p[j][j];
+            k1 = copy._p[i][j];
             for (short k=0; k<_r; ++k)
                 ans._p[i][k] -= k1 * ans._p[j][k];
         }
@@ -305,7 +307,6 @@ std::ostream& operator<<(std::ostream& os, const Mat& m)
     if ((Mat::OutputFormat&0xF8)!=0) TRACELOG(LOG_WARNING, "Wrong print format were given.");
     unsigned char opf = Mat::OutputFormat & 0x07;
     if (Mat::precision<=1) TRACELOG(LOG_WARNING, "Wrong print precision were given.");
-    
     os.precision(Mat::precision);
     if (opf & USE_BRACKET) os << "[";
     if (opf & WRAP_AROUND) os << std::endl;
