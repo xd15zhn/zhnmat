@@ -78,6 +78,33 @@ void Mat::set(int r, int c, double value)
         " Input rows and cols:%d,%d;  Max rows and cols:%d,%d.", r,c,_r,_c);
     _p[r][c]=value;
 }
+Mat Mat::atr(int r) const {
+    Mat ans(1, _c);
+    for (int i = 0; i < _c; i++)
+        ans._p[0][i] = _p[r][i];
+    return ans;    
+}
+Mat Mat::atc(int c) const {
+    Mat ans(_r, 1);
+    for (int i = 0; i < _r; i++)
+        ans._p[i][0] = _p[i][c];
+    return ans;    
+}
+void Mat::setr(int r, Mat m) const {
+    if (m._r !=1 || m._c != _c)
+        TRACELOG(LOG_FATAL, "setr indexes out of range!"
+        " Input rows and cols:%d,%d;  Max rows and cols:%d,%d.", m._r,m._c,_r,_c);
+    for (int i = 0; i < _c; i++)
+        _p[r][i] = m._p[0][i];
+}
+void Mat::setc(int c, Mat m) const {
+    if (m._c !=1 || m._r != _r)
+        TRACELOG(LOG_FATAL, "setr indexes out of range!"
+        " Input rows and cols:%d,%d;  Max rows and cols:%d,%d.", m._r,m._c,_r,_c);
+    for (int i = 0; i < _c; i++)
+        _p[i][c] = m._p[i][0];
+}
+
 Mat Mat::T()
 {
     Mat ans(_c, _r);

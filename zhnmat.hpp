@@ -71,13 +71,17 @@ public:
     int row() const;
     int col() const;
 
-    // Get and set specified pixels.
+    // Get and set specified element.
     double at(int r, int c) const;
     void set(int r, int c, double value=0);
+    // Get and set elements in a specified row or col.
+    Mat atr(int r) const;
+    Mat atc(int r) const;
+    void setr(int r, Mat m) const;
+    void setc(int c, Mat m) const;
 
     // Matrix transpose.
     Mat T();
-
     // Matrix inverse.
     Mat inv();
 
