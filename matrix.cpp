@@ -29,6 +29,13 @@ Mat::Mat(const Mat& m) {
         for (int j = 0; j < _c; ++j)
             _p[i][j] = m._p[i][j];
 }
+Mat::Mat(const Vector3d& vec) {
+    _r = 3; _c = 1;
+    initialize();
+    _p[0][0] = vec._x;
+    _p[1][0] = vec._y;
+    _p[2][0] = vec._z;
+}
 Mat::Mat(std::vector<double> data) {
     if (data.size()<1) return;
     _r = data.size(); _c = 1;

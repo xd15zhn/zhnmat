@@ -12,7 +12,10 @@ Vector3d& Vector3d::operator=(const Mat& m) {
     if (m.row()!=3 || m.col()!=1) TRACELOG(LOG_FATAL, "Size mismatch in equation constructor!");
     _x=m.at(0,0), _y=m.at(1,0), _z=m.at(2,0); return *this;
 }
-
+Vector3d::Vector3d(const Mat& m) {
+    if (m.row()!=3 || m.col()!=1) TRACELOG(LOG_FATAL, "Size mismatch in equation constructor!");
+    _x=m.at(0,0), _y=m.at(1,0), _z=m.at(2,0);
+}
 /**********************
 operator addition and subtraction
 **********************/

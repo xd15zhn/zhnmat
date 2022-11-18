@@ -20,6 +20,7 @@ struct Vector3d
     Vector3d();
     Vector3d(double x, double y, double z);
     Vector3d(const Vector3d& vec);
+    Vector3d(const Mat& m);
     Vector3d& operator=(const Vector3d& vec);
     Vector3d& operator=(const Mat& m);
 
@@ -62,6 +63,7 @@ class Mat
 public:
     Mat();
     Mat(const Mat& m);
+    Mat(const Vector3d& vec);
     Mat(std::vector<double> data);
     Mat(int r, int c, double value=0);
     Mat(int r, int c, std::vector<double> data);
