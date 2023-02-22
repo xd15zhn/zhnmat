@@ -6,13 +6,26 @@
 NAMESPACE_ZHNMAT_L
 
 constexpr double EPSILON = 1e-12;
-enum OUTPUT_FORMAT {
-    USE_BRACKET = 1 << 0,
-    WRAP_AROUND = 1 << 1,
-    USE_SEMICOLON = 1 << 2
-};
 
 class Mat;
+
+/**********************
+Output format. Default:
+[1, 2, 3; 4, 5, 6; 7, 8, 9]
+**********************/
+struct OutputFormat {
+    std::string prefix = "[";
+    std::string rowin = ", ";
+    std::string rowout = "; ";
+    std::string suffix = "]";
+};
+
+struct Rect
+{
+    Rect(int x, int y, int w, int h):
+        _x(x), _y(y), _w(w), _h(h) {};
+    int _x, _y, _w, _h;
+};
 
 struct Vector3d
 {
@@ -49,13 +62,6 @@ struct Vector3d
     Vector3d Normalvector() const;  // Return the normal vector of this vector.
     Vector3d& Normalize();  // Normalize this vector and return itself.
     double _x, _y, _z;
-};
-
-struct Rect
-{
-    Rect(int x, int y, int w, int h):
-        _x(x), _y(y), _w(w), _h(h) {};
-    int _x, _y, _w, _h;
 };
 
 class Mat
@@ -107,14 +113,14 @@ public:
     Mat& operator=(const Vector3d& vec);
     Mat operator()(const Rect& rect) const;
     friend std::ostream& operator<<(std::ostream& os, const Mat& m);
-    static unsigned char OutputFormat;
-    static double precision;
+    static void Set_Precision(int precision=15);
+    static OutputFormat _format;
 
 private:
     int _r, _c;
     double** _p;
     void initialize();
-    Mat L(), U();
+    static int _precision;
 };
 
 /**********************

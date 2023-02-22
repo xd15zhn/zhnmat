@@ -6,12 +6,15 @@ NAMESPACE_ZHNMAT_L
 #ifndef ABS
 #define ABS(x)                          ((x)>=0?(x):-(x))
 #endif
+#ifndef LIMIT
+#define LIMIT(x, min, max)           (((x)<=(min) ? (min) : ((x)>=(max) ? (max) : (x))))
+#endif
 
-unsigned char Mat::OutputFormat = USE_BRACKET | USE_SEMICOLON;
-double Mat::precision = 15;
 Mat::Mat() :_r(0), _c(0), _p(nullptr) {}
 int Mat::row() const { return _r; }
 int Mat::col() const { return _c; }
+int Mat::_precision = 15;
+OutputFormat Mat::_format;
 
 /**********************
 Construction and Destruction
@@ -336,21 +339,20 @@ Mat Mat::operator()(const Rect &rect) const
 /**********************
 Print
 **********************/
-std::ostream& operator<<(std::ostream& os, const Mat& m)
-{
-    if ((Mat::OutputFormat&0xF8)!=0) TRACELOG(LOG_WARNING, "Wrong print format were given.");
-    unsigned char opf = Mat::OutputFormat & 0x07;
-    if (Mat::precision<=1) TRACELOG(LOG_WARNING, "Wrong print precision were given.");
-    os.precision(Mat::precision);
-    if (opf & USE_BRACKET) os << "[";
-    if (opf & WRAP_AROUND) os << std::endl;
-    for (int i=0; i<m._r; ++i){
+void Mat::Set_Precision(int precision) {
+    _precision = LIMIT(precision, 1, 32);
+}
+std::ostream& operator<<(std::ostream& os, const Mat& m) {
+    os.precision(Mat::_precision);
+    os << Mat::_format.prefix;
+    for (int i=0; i<m._r-1; ++i){
         for (int j=0; j<m._c-1; ++j)
-            os << m._p[i][j] << ", ";
-        os << m._p[i][m._c-1] << ((opf & USE_SEMICOLON)? "; " : ", ");
-        if (opf & WRAP_AROUND) os << std::endl;
+            os << m._p[i][j] << Mat::_format.rowin;
+        os << m._p[i][m._c-1] << Mat::_format.rowout;
     }
-    if (opf & USE_BRACKET) os << "]";
+    for (int j=0; j<m._c-1; ++j)
+        os << m._p[m._r-1][j] << Mat::_format.rowin;
+    os << m._p[m._r-1][m._c-1] << Mat::_format.suffix;
     return os;
 }
 
