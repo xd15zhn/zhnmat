@@ -22,7 +22,7 @@ struct OutputFormat {
 
 struct Rect
 {
-    Rect(int x, int y, int w, int h):
+    Rect(int y, int x, int h, int w):
         _x(x), _y(y), _w(w), _h(h) {};
     int _x, _y, _w, _h;
 };
