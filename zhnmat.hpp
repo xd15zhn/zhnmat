@@ -87,6 +87,8 @@ public:
     Mat atc(int r) const;
     void setr(int r, Mat m) const;
     void setc(int c, Mat m) const;
+    // 
+    std::vector<double> To_Vector() const;
 
     // Matrix transpose.
     Mat T();

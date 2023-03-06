@@ -114,6 +114,13 @@ void Mat::setc(int c, Mat m) const {
     for (int i = 0; i < _c; i++)
         _p[i][c] = m._p[i][0];
 }
+std::vector<double> Mat::To_Vector() const {
+    std::vector<double> ans;
+    for (int i = 0; i < _r; ++i)
+        for (int j = 0; j < _c; ++j)
+            ans.push_back(_p[i][j]);
+    return ans;
+}
 
 Mat Mat::T()
 {
