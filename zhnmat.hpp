@@ -6,6 +6,7 @@
 NAMESPACE_ZHNMAT_L
 
 constexpr double EPSILON = 1e-12;
+typedef unsigned int uint;
 
 class Mat;
 
@@ -138,10 +139,15 @@ Mat eye(int n);
 // Transform to antisymmetric matrix. It requires the matrix to be size of 3-by-1.
 Mat Antisymmetric(const Mat& m);
 
+//
+Mat Insertr(const Mat& m, uint r, const Mat& data);
+Mat Insertc(const Mat& m, uint c, const Mat& data);
+//
+Mat Deleter(const Mat& m, uint r);
+Mat Deletec(const Mat& m, uint c);
 // Horizontal and vertical concatenate of two matrices.
 Mat HConcat(const Mat& m1, const Mat& m2);
 Mat VConcat(const Mat& m1, const Mat& m2);
-
 #pragma endregion extra
 
 NAMESPACE_ZHNMAT_R

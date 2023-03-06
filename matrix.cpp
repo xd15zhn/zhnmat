@@ -333,9 +333,11 @@ Mat& Mat::operator=(const Vector3d& vec)
 }
 Mat Mat::operator()(const Rect &rect) const
 {
-    if (_r<=0 || _c<=0) TRACELOG(LOG_FATAL, "Matrix haven't been initialized!");
-    if (rect._w<=0 && rect._h<=0) TRACELOG(LOG_FATAL, "Rect error!");
-    if (_r<rect._h || _c<rect._w) TRACELOG(LOG_FATAL, "Rect out of range!");
+    if (_r<=0 || _c<=0) return Mat();
+    if (rect._w<=0 && rect._h<=0) return Mat();
+    if (rect._x<0 || rect._y<0) return Mat();
+    if (rect._x>=_c || rect._y>=_r) return Mat();
+    if (rect._x+rect._w>_c || rect._y+rect._h>_r) return Mat();
     Mat ans(rect._h, rect._w);
     for (int i = 0; i < ans._r; ++i)
         for (int j = 0; j < ans._c; ++j)
