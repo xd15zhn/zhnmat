@@ -1,3 +1,7 @@
+/**********************
+Additional library functions to help coding easily,
+ and can be removed to save space when building the project.
+**********************/
 #include <iostream>
 #include <cmath>
 #include "zhnmat.hpp"
@@ -14,7 +18,6 @@ double Vec_angle(Vector3d &v1, Vector3d &v2)
     double ans = (v1*v2) / v1norm / v2norm;
     return (ans<-1) ? -1 : ((ans>1) ? 1 : ans);
 }
-
 
 Mat eye(int n)
 {

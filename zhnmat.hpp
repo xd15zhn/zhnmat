@@ -75,6 +75,7 @@ public:
     Mat(int r, int c, double value=0);
     Mat(int r, int c, std::vector<double> data);
     ~Mat();
+    void Clear();
 
     // Return how many rows and columns.
     int row() const;

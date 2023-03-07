@@ -66,6 +66,20 @@ Mat C1(1, 3, vecdble{1, 1, 0});
 Mat C2 = eye(3);  // 单位矩阵
 Mat C = VConcat(C1, C2);
 ```
+插入与删除
+```cpp
+    vecdble data;
+    for (size_t i = 0; i < 9; i++)
+        data.push_back(rand());
+    Mat A(3, 3, data);
+    Mat ins(1, 3, vecdble{1, 1, 1});
+    Mat B = Insertr(A, 1, ins);  // 将给定矩阵插入到第1行(下标从0开始)
+    Mat C = Deletec(B, 2);  // 删除第2列(下标从0开始)
+    Mat::_format.rowout = ";\n";
+    cout << A << endl;
+    cout << B << endl;
+    cout << C << endl;
+```
 
 ## 修改打印格式
 下面的代码可以将矩阵输出成可用于 markdown 或 $\LaTeX$ 的格式。
@@ -82,4 +96,11 @@ Mat C = VConcat(C1, C2);
     Mat::_format.rowout = " \\\\\n";  // 两行之间输出的字符串
     Mat::_format.suffix = "]";  // 输出矩阵之后继续输出的字符串
     cout << A << endl;
+```
+输出为
+```tex
+[0 & 0 & 0 \\
+-3.91896 & -5.23722 & -0.000310564 \\
+0.0736635 & 0.0984425 & 0.00603622 \\
+1.89333 & 0.364831 & 8.57639e-05]
 ```

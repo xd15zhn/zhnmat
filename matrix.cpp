@@ -66,9 +66,15 @@ Mat::Mat(int r, int c, std::vector<double> data) {
     }
 }
 Mat::~Mat() {
+    Clear();
+}
+void Mat::Clear() {
+    if (_p == nullptr) return;
     for (int i = 0; i < _r; ++i)
         delete[] _p[i];
     delete[] _p;
+    _p = nullptr;
+    _r = _c = 0;
 }
 
 /**********************
