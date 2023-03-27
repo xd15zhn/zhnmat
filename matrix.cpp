@@ -367,7 +367,9 @@ std::ostream& operator<<(std::ostream& os, const Mat& m) {
     }
     for (int j=0; j<m._c-1; ++j)
         os << m._p[m._r-1][j] << Mat::_format.rowin;
-    os << m._p[m._r-1][m._c-1] << Mat::_format.suffix;
+    if ((m._r >= 1) && (m._c >= 1))
+        os << m._p[m._r-1][m._c-1];
+    os << Mat::_format.suffix;
     return os;
 }
 

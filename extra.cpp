@@ -40,25 +40,25 @@ Mat Antisymmetric(const Mat& m)
     return ans;
 }
 
-Mat Insertr(const Mat& m, uint r, const Mat& data) {
+Mat Insertr(const Mat& m, uint32_t r, const Mat& data) {
     if (r > m.row()) TRACELOG(LOG_FATAL, "Insert row error! %d and %d.", r, m.row());
     Mat ans1 = m(Rect(0, 0, r, m.col()));
     Mat ans2 = m(Rect(r, 0, m.row()-r, m.col()));
     return VConcat(VConcat(ans1, data), ans2);
 }
-Mat Deleter(const Mat& m, uint r) {
+Mat Deleter(const Mat& m, uint32_t r) {
     if (r >= m.row()) TRACELOG(LOG_FATAL, "Delete row error! %d and %d.", r, m.row());
     Mat ans1 = m(Rect(0, 0, r, m.col()));
     Mat ans2 = m(Rect(r+1, 0, m.row()-r-1, m.col()));
     return VConcat(ans1, ans2);
 }
-Mat Insertc(const Mat& m, uint c, const Mat& data) {
+Mat Insertc(const Mat& m, uint32_t c, const Mat& data) {
     if (c > m.col()) TRACELOG(LOG_FATAL, "Insert row error! %d and %d.", c, m.col());
     Mat ans1 = m(Rect(0, 0, m.row(), c));
     Mat ans2 = m(Rect(0, c, m.row(), m.col()-c));
     return HConcat(HConcat(ans1, data), ans2);
 }
-Mat Deletec(const Mat& m, uint c) {
+Mat Deletec(const Mat& m, uint32_t c) {
     if (c >= m.col()) TRACELOG(LOG_FATAL, "Delete row error! %d and %d.", c, m.col());
     Mat ans1 = m(Rect(0, 0, m.row(), c));
     Mat ans2 = m(Rect(0, c+1, m.row(), m.col()-c-1));
